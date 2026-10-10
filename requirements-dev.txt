@@ -1,0 +1,3 @@
+pytest>=8,<10
+unicorn>=2.1.4,<3
+capstone>=5.0.9,<6

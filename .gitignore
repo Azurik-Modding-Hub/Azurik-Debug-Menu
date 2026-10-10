@@ -1,0 +1,16 @@
+__pycache__/
+.pytest_cache/
+.venv/
+build/
+dist/
+*.spec
+*.iso
+*.xiso
+*.xbe
+*.xbr
+*.qcow2
+*.eeprom
+*.exe
+*.zip
+releases/
+*.report.json
