@@ -53,4 +53,4 @@ La première version de test concerne la caméra libre. L'outil Windows installe
 la modification dans une nouvelle ISO; le menu s'utilise ensuite dans Azurik.
 
 [Documentation anglaise et installation depuis Python](README.md)
-· [Azurik Level Editor](https://github.com/AzurikPerathia/Azurik-Level-Editor)
+· [Azurik Level Editor](https://github.com/Azurik-Modding-Hub/Azurik-Level-Editor)

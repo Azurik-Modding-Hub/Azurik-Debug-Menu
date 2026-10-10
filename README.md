@@ -17,7 +17,7 @@ menu transitions and HUD behaviour. No game executable, ISO, save, model or text
 is distributed in this repository or its downloads.
 
 [Guide français](README.fr.md) · [Technical notes](docs/IMPLEMENTATION.md)
-· [Azurik Level Editor](https://github.com/AzurikPerathia/Azurik-Level-Editor)
+· [Azurik Level Editor](https://github.com/Azurik-Modding-Hub/Azurik-Level-Editor)
 
 ![Windows ISO patcher — actual desktop interface](docs/patcher-windows.png)
 
@@ -40,7 +40,7 @@ The HUD returns to its previous visibility when exiting with WHITE or BACK.
 
 ## Windows
 
-Download the **Windows patcher** from [Releases](https://github.com/AzurikPerathia/Azurik-Debug-Menu/releases).
+Download the **Windows patcher** from [Releases](https://github.com/Azurik-Modding-Hub/Azurik-Debug-Menu/releases).
 Open `Azurik Freecam Patcher.exe`, choose your own Azurik Xbox ISO/XISO, and choose
 a **new** output file. The patcher copies the image, installs the new executable
 in that copy, and verifies the complete game data. It never replaces an existing
@@ -106,7 +106,7 @@ powershell -File ".\Build Windows.ps1"
 
 The reverse-engineering context comes from
 [JTCPP / Elemental Games Modding](https://github.com/JTCPP/Elemental_Games_Modding)
-and [Elemental Games Modding — Expensions](https://github.com/AzurikPerathia/Elemental_Games_Modding---Expensions).
+and [Elemental Games Modding — Expensions](https://github.com/Azurik-Modding-Hub/Elemental_Games_Modding---Expensions).
 This standalone implementation targets the verified PAL executable rather than
 assuming the USA addresses from older symbol tables apply.
 
