@@ -1,7 +1,7 @@
 # Azurik Debug Menu
 
 A standalone **PAL / European Xbox test patch** for *Azurik: Rise of Perathia*.
-It extends the **existing in-game debug menu** with **Free Camera** and invokes the native
+It extends the **existing in-game debug menu** with **Freecam** and invokes the native
 camera used by the original cheat. The world continues updating while Azurik's
 own physics and animation tick is held. Press **WHITE** to return to gameplay;
 press **Y** to hide or show the HUD.
@@ -11,7 +11,7 @@ applies across **all playable kingdoms** in the supported European build, with
 no W1 restriction. Individual kingdoms still need in-game verification. Activate
 freecam during loaded gameplay, rather than on the title or loading screens.
 
-**Status: experimental 0.1.0.** Isolated x86 tests and ISO readback verification
+**Status: experimental 0.1.1.** Isolated x86 tests and ISO readback verification
 are provided. A complete in-game test is still required, including collisions,
 menu transitions and HUD behaviour. No game executable, ISO, save, model or texture
 is distributed in this repository or its downloads.
@@ -28,7 +28,7 @@ This screenshot shows the patcher interface, rather than an in-game test result.
 | Action | Xbox controller |
 | --- | --- |
 | Open the native debug menu | **L3 + START** |
-| Activate the original freecam | Select **Free Camera**, then confirm with **START** |
+| Activate the original freecam | Select **Freecam**, then confirm with **START** |
 | Camera movement and orientation | Original native camera controls |
 | Hide / show the HUD | **Y**, while freecam is active |
 | Exit freecam | **WHITE**; native **BACK** is also preserved |
@@ -37,6 +37,13 @@ This screenshot shows the patcher interface, rather than an in-game test result.
 For the original sequence, release each button before the next; do not keep RT
 held throughout it. WHITE is an exit button. No WHITE + R3 activation is added.
 The HUD returns to its previous visibility when exiting with WHITE or BACK.
+
+**Freecam is the fourth entry in the game's existing root debug menu**, alongside
+the European build's original **Change level...**, **Play Movie...** and
+**Game state...** entries. It is available as soon as that native menu opens;
+there is no extra submenu to open. The three existing entries are preserved.
+The Windows patcher installs this change into your new ISO; it is not the debug
+menu itself.
 
 ## Windows
 
@@ -49,6 +56,10 @@ output or changes the input image.
 Boot the new image in Xemu with a full console restart. An old emulator snapshot
 can keep the previous executable in memory. Your original image remains the
 rollback copy. To remove the patch, boot that original image again.
+
+Check that the root debug menu has **four** entries, including **Freecam**.
+If it still has only the three original entries, verify the selected ISO and
+cold-boot that new image before testing the camera.
 
 EDIT : You need to clear the cache for the changes you make to take effect ! Don’t worry, this won’t affect your save files in any way!
 

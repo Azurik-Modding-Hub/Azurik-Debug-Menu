@@ -27,7 +27,7 @@ def gui():
     ttk.Label(area, text='PAL / Europe — version de test · Test build', font=('Segoe UI', 10)).pack(anchor='w', pady=(4, 18))
     ttk.Label(area, text='Sélectionnez votre ISO Xbox. Une nouvelle copie sera créée.\n'
               'Choose your Xbox ISO. The original file is preserved.').pack(anchor='w')
-    ttk.Label(area, text='L3 + START : menu debug · Free Camera : activer\n'
+    ttk.Label(area, text='L3 + START : menu debug · Freecam : 4e entrée / 4th entry\n'
               'Blanc / White : quitter · Y : afficher / masquer le HUD').pack(anchor='w', pady=15)
     status = tk.StringVar(value='Prêt / Ready')
     bar = ttk.Progressbar(area, maximum=100)

@@ -336,7 +336,7 @@ def test_native_menu_factory_constructor_registration_and_original_epilogue(reta
     assert u.reg_read(r.UC_X86_REG_ESP) == STACK + 0x7EC
     if allocation_succeeds:
         assert get(u, ROW) == 0x1A3C08
-        assert bytes(u.mem_read(ROW + 0x1C, 16)) == b'Free Camera'.ljust(16, b'\0')
+        assert bytes(u.mem_read(ROW + 0x1C, 16)) == b'Freecam'.ljust(16, b'\0')
         assert get(u, ROW + 0x84) == callback
         assert get(u, ROW + 0x88) == 0
         assert get(u, ROW + 0x0C) == PARENT
@@ -358,3 +358,159 @@ def test_native_world_pause_predicate_only_excludes_original_camera(retail, stat
     run_until(u, 0x15F60)
     assert u.reg_read(r.UC_X86_REG_EAX) & 0xFF == expected
     assert u.reg_read(r.UC_X86_REG_ESP) == STACK + 4
+
+
+def construct_native_root_menu(image, *, fail_freecam_allocation=False, via_native_activation=False):
+    """Execute the complete retail root constructor, not only our tail hook.
+
+    Only the allocator and the current-level display-name accessor are engine
+    boundaries. The retail base constructor, all three original row
+    constructors, vector insertion and selection code execute unchanged.
+    """
+    u = machine(image)
+    u.mem_map(0x720000, 0x10000)
+    stack = STACK + 0x1000  # Native activation adds one more 2 KiB stack frame.
+    next_heap = 0x720000
+    object_allocations = []
+
+    def reserve(size):
+        nonlocal next_heap
+        assert 0 < size <= 0x1000
+        result = next_heap
+        next_heap += (size + 15) & ~15
+        assert next_heap <= 0x730000
+        return result
+
+    def heap(uc):
+        uc.reg_write(r.UC_X86_REG_EAX, HEAP)
+        return_from(uc)
+
+    def allocate_object(uc):
+        sp = uc.reg_read(r.UC_X86_REG_ESP)
+        assert get(uc, sp + 4) == HEAP
+        assert get(uc, sp + 8) == 0
+        size = get(uc, sp + 12)
+        object_allocations.append(size)
+        final_allocation = 6 if via_native_activation else 5
+        fail = fail_freecam_allocation and len(object_allocations) == final_allocation
+        uc.reg_write(r.UC_X86_REG_EAX, 0 if fail else reserve(size))
+        return_from(uc, 12)
+
+    def allocate_vector(uc):
+        uc.reg_write(r.UC_X86_REG_EAX, reserve(uc.reg_read(r.UC_X86_REG_EAX)))
+        return_from(uc)
+
+    def level_name(uc):
+        # The level title is optional; it does not construct the root rows.
+        uc.reg_write(r.UC_X86_REG_EAX, 0)
+        return_from(uc)
+
+    put(u, stack, EXIT)
+    arguments = (OWNER, INTERFACE, 0) if via_native_activation else (CONTEXT, OWNER, INTERFACE)
+    for index, value in enumerate(arguments):
+        put(u, stack + 4 + index * 4, value)
+    if via_native_activation:
+        # Execute the retail L3 + START entry, including its call to the actual
+        # root constructor. The separate developer drone shortcut stays off.
+        put(u, 0x1A9A64, 0)
+        put(u, 0x38EA10, HUD)
+        put(u, HUD + 4, 0)
+        put(u, CONTROLLER + 0x38, 0x3F800000)  # START
+        put(u, CONTROLLER + 0x40, 0x3F800000)  # L3
+        put(u, OWNER + 0x20, VECTOR)
+        put(u, OWNER + 0x24, VECTOR)
+        put(u, OWNER + 0x28, VECTOR + 0x10)
+    u.reg_write(r.UC_X86_REG_ESP, stack)
+    preserved = {r.UC_X86_REG_EBX: 0x11223344, r.UC_X86_REG_ESI: 0x22334455,
+                 r.UC_X86_REG_EDI: 0x33445566, r.UC_X86_REG_EBP: 0x44556677}
+    for register, value in preserved.items():
+        u.reg_write(register, value)
+    run_until(u, 0x17090 if via_native_activation else 0x138D0,
+              {0xE67CD: heap, 0xE4C9F: allocate_object,
+               0x185E0: allocate_vector, 0x8D960: level_name}, count=20000)
+    assert u.reg_read(r.UC_X86_REG_ESP) == stack + 4 + 4 * len(arguments)
+    context = get(u, VECTOR) if via_native_activation else CONTEXT
+    if via_native_activation:
+        assert get(u, OWNER + 0x1C) == 2
+        assert get(u, OWNER + 0x24) == VECTOR + 4
+        assert u.mem_read(CONTROLLER + 0x52, 1) == b'\x01'
+    else:
+        assert u.reg_read(r.UC_X86_REG_EAX) == context
+    assert all(u.reg_read(register) == value for register, value in preserved.items())
+    assert get(u, context + 0xB4) == OWNER
+    assert get(u, context + 0xB8) == INTERFACE
+    parent = get(u, context + 4)
+    assert parent and get(u, parent) == 0x1A3C08
+    begin, end = get(u, parent + 0x10), get(u, parent + 0x14)
+    assert begin <= end <= get(u, parent + 0x18)
+    rows = []
+    for address in range(begin, end, 4):
+        row = get(u, address)
+        rows.append({
+            'label': bytes(u.mem_read(row + 0x1C, 100)).split(b'\0')[0].decode('ascii'),
+            'class': get(u, row), 'callback': get(u, row + 0x84),
+            'owner': get(u, row + 0x0C), 'address': row,
+        })
+        assert rows[-1]['owner'] == parent
+    return u, rows, object_allocations
+
+
+def test_complete_native_root_menu_preserves_three_rows_and_appends_fourth(retail):
+    source, image, metadata = retail
+    _, original, original_allocations = construct_native_root_menu(source)
+    _, patched, patched_allocations = construct_native_root_menu(image)
+    assert [row['label'] for row in original] == [
+        'Change level...', 'Play Movie...', 'Game state...']
+    assert [row['label'] for row in patched] == [
+        'Change level...', 'Play Movie...', 'Game state...', 'Freecam']
+    assert [(row['class'], row['callback']) for row in patched[:3]] == [
+        (row['class'], row['callback']) for row in original]
+    assert original_allocations == [0x8C, 0x90, 0x90, 0x90]
+    assert patched_allocations == original_allocations + [0x8C]
+    assert patched[-1]['class'] == 0x1A3C08
+    assert patched[-1]['callback'] == metadata['routines']['menuCallback']['va']
+
+
+def test_fourth_row_allocation_failure_preserves_native_three_item_menu(retail):
+    source, image, metadata = retail
+    _, rows, allocations = construct_native_root_menu(image, fail_freecam_allocation=True)
+    assert allocations == [0x8C, 0x90, 0x90, 0x90, 0x8C]
+    assert [row['label'] for row in rows] == [
+        'Change level...', 'Play Movie...', 'Game state...']
+
+
+def test_real_l3_start_activation_opens_existing_menu_with_fourth_freecam_row(retail):
+    source, image, metadata = retail
+    _, original, _ = construct_native_root_menu(source, via_native_activation=True)
+    u, patched, allocations = construct_native_root_menu(image, via_native_activation=True)
+    assert [row['label'] for row in patched] == [
+        'Change level...', 'Play Movie...', 'Game state...', 'Freecam']
+    assert [(row['class'], row['callback']) for row in patched[:3]] == [
+        (row['class'], row['callback']) for row in original]
+    assert allocations == [0x11C, 0x8C, 0x90, 0x90, 0x90, 0x8C]
+    assert patched[-1]['callback'] == metadata['routines']['menuCallback']['va']
+    assert get(u, OWNER + 0x1C) == 2
+
+
+@pytest.mark.parametrize('state', [0, 1, 2, 3, 4, 0xFFFFFFFF])
+@pytest.mark.parametrize('start,live,paused', [
+    (0x54961, 0x5496D, 0x54983),
+    (0x55FE0, 0x55FF0, 0x560B9),
+    (0x562DB, 0x562E7, 0x56326),
+])
+def test_actual_native_simulation_callers_continue_in_freecam(retail, state, start, live, paused):
+    source, image, metadata = retail
+    outcomes = []
+    for data, frozen_states in ((source, (1, 2, 3)), (image, (2, 3))):
+        u = machine(data)
+        put(u, OWNER + 0x1C, state)
+        put(u, CONTEXT + 0x40, OWNER)
+        u.reg_write(r.UC_X86_REG_EBP, CONTEXT)
+        u.reg_write(r.UC_X86_REG_EDX, CONTEXT)
+        u.reg_write(r.UC_X86_REG_ESP, STACK)
+        destination = run_until(u, start, targets=(live, paused), count=100)
+        assert destination == (paused if state in frozen_states else live)
+        assert u.reg_read(r.UC_X86_REG_ESP) == STACK
+        outcomes.append(destination)
+    if state != 1:
+        assert outcomes[0] == outcomes[1], 'An unrelated native state changed its simulation path'

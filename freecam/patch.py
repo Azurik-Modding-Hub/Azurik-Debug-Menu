@@ -5,7 +5,8 @@ from .xbe import allocate, offset, sections, u32
 
 SOURCE_SHA256 = '72e0cf6af079a4024886d9e94812d87d4a35c177135b6196d215abe138866eab'
 SOURCE_SIZE = 1798144
-VERSION = '0.1.0'
+VERSION = '0.1.1'
+ROOT_MENU_LABELS = ('Change level...', 'Play Movie...', 'Game state...', 'Freecam')
 
 
 class Code:
@@ -70,7 +71,7 @@ def menu_factory(va, callback):
     c.branch('0f84', 'end')
     c.branch('e8', 0x1FC40)
     c.emit('8bf0')
-    text = b'Free Camera'.ljust(16, b'\0')
+    text = b'Freecam'.ljust(16, b'\0')
     for at in range(0, 16, 4):
         c.emit(b'\xC7\x46' + bytes([0x1C + at]) + text[at:at + 4])
     c.emit(b'\xC7\x86\x84\x00\x00\x00' + dword(callback))
@@ -146,7 +147,7 @@ def patch_xbe(source):
         if source[at:at + len(bytes.fromhex(expected))] != bytes.fromhex(expected):
             raise ValueError(f'Unexpected PAL signature at {va:#x}')
     output, raw, va = allocate(source)
-    output[raw:raw + 8] = b'FCDBG01\0'
+    output[raw:raw + 8] = b'FCDBG02\0'
     used = 32
     routines = {}
     def add(name, builder):
@@ -188,4 +189,9 @@ def patch_xbe(source):
     return bytes(output), dict(version=VERSION, sourceSha256=SOURCE_SHA256,
         outputSha256=hashlib.sha256(output).hexdigest(), sectionRaw=raw, sectionVA=va,
         sectionBytes=2048, routines=routines, hooks=[{'offset': at, 'bytes': size} for at, size in ranges],
-        originalCheatPreserved=True, nativeGameTested=False)
+        originalCheatPreserved=True, nativeGameTested=False,
+        nativeRootMenu={'constructorVA': 0x138D0, 'appendHookVA': 0x13E6D,
+                        'labels': list(ROOT_MENU_LABELS), 'originalRowsPreserved': 3,
+                        'freecamRowIndex': 3, 'callbackVA': callback,
+                        'activation': 'Native debug menu cheat / L3 + START',
+                        'worldContinues': True, 'exit': 'WHITE or BACK', 'hud': 'Y'})

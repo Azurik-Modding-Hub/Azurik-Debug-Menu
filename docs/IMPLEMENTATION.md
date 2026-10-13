@@ -13,6 +13,11 @@ Address mapping is read from that XBE's section table.
 | File `0xE6717` | Enable the retail cheat-buttons default so L3 + START exposes the menu |
 
 The original RT/D-pad/R3/L3 cheat table and camera creation code are unchanged.
+The hook extends the complete root constructor at `0x138D0`. That retail
+constructor creates **Change level...**, **Play Movie...** and **Game state...**;
+**Freecam** is registered as a fourth sibling in the same parent object's
+children vector. It does not replace an existing entry or require a submenu.
+The `0x13E6D` epilogue is reached after all three original registrations.
 The menu callback uses the native generic-action ABI (`ECX` = menu context,
 `EDX` = row, one stack argument, `RET 4`). Its context's `+0xB4` field is the
 cheat owner, `+0xB8` the gameplay interface. It calls the same action dispatcher
@@ -48,5 +53,12 @@ exclusive output create prevents overwriting the original or another output.
 
 Automated x86 tests validate register/stack conventions and local state
 transitions. They do **not** run the full Xbox kernel, renderer or gameplay.
+The root-menu regression test executes the original base constructor, all three
+original row constructors, actual vector insertion and row selection. Heap
+allocation and the optional current-level title accessor are intercepted engine
+boundaries. The three simulation sites at `0x54961`, `0x55FE0` and `0x562DB`
+execute their real calls and branches: only state 1 changes from the paused
+path to the live path. These checks establish the binary integration, without
+claiming a displayed Xbox menu or a running-world gameplay test.
 This release therefore remains experimental until native testing confirms the
 menu, full camera lifecycle, player stasis, HUD and interactions with enemies.
