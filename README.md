@@ -20,9 +20,13 @@ is distributed in this repository or its downloads.
 [Guide français](README.fr.md) · [Technical notes](docs/IMPLEMENTATION.md)
 · [Azurik Level Editor](https://github.com/Azurik-Modding-Hub/Azurik-Level-Editor)
 
-![Windows ISO patcher — actual desktop interface](docs/patcher-windows.png)
+![Windows ISO patcher 1.0.0 — actual desktop interface](docs/screenshots/patcher-1.0.0.png)
 
-Desktop patcher interface from the initial test release. In-game validation remains pending.
+Desktop patcher interface captured in version 1.0.0. In-game validation remains pending.
+
+![Native menu and Freecam controls — explanatory diagram](docs/screenshots/freecam-controls-1.0.0.svg)
+
+This diagram explains the menu structure and controls; it does not depict an in-game test.
 
 Version **1.0.0** fixes Azurik remaining frozen after leaving Freecam. The earlier
 patch skipped his whole update, including its re-registration for future frames.

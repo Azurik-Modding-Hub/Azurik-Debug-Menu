@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="850" viewBox="0 0 1440 850" role="img" aria-labelledby="title desc">
+<title id="title">Azurik Debug Menu 1.0.0 — Native menu and Freecam controls</title>
+<desc id="desc">Explanatory diagram of the four native menu entries, activation, camera control, HUD toggle and exit. This is not a game screenshot.</desc>
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#111d28"/><stop offset="1" stop-color="#172e38"/></linearGradient></defs>
+<rect width="1440" height="850" rx="28" fill="url(#bg)"/>
+<path d="M48 56h8v91h-8" fill="#64c7bb"/>
+<g font-family="Segoe UI,Arial,sans-serif">
+<text x="84" y="88" fill="#8aa8b8" font-size="20" letter-spacing="4">AZURIK MODDING HUB</text>
+<text x="80" y="140" fill="#eaf2f5" font-size="42" font-weight="700">Debug Menu <tspan fill="#64c7bb">1.0.0</tspan></text>
+<text x="80" y="180" fill="#abc1ce" font-size="22">Native menu · Freecam · HUD visibility</text>
+<rect x="64" y="224" width="594" height="429" rx="18" fill="#0e1923" stroke="#375362" stroke-width="2"/>
+<text x="98" y="272" fill="#cbae72" font-size="27" font-weight="600">Commande menue - 1.0.0</text>
+<path d="M98 293h526" stroke="#375362"/>
+<text x="108" y="348" fill="#cfdee6" font-size="27">Change level...</text>
+<text x="108" y="416" fill="#cfdee6" font-size="27">Play Movie...</text>
+<text x="108" y="484" fill="#cfdee6" font-size="27">Game state...</text>
+<rect x="90" y="513" width="542" height="68" rx="10" fill="#254a50" stroke="#64c7bb" stroke-width="2"/>
+<text x="109" y="557" fill="#f2fbfb" font-size="29" font-weight="600">Freecam</text>
+<text x="609" y="557" fill="#64c7bb" font-size="26" text-anchor="end">4th entry</text>
+<text x="98" y="624" fill="#89a8b9" font-size="19">Menu structure · explanatory illustration</text>
+<g fill="#19313d" stroke="#365563"><rect x="698" y="224" width="678" height="98" rx="14"/><rect x="698" y="336" width="678" height="98" rx="14"/><rect x="698" y="448" width="678" height="98" rx="14"/><rect x="698" y="560" width="678" height="93" rx="14"/></g>
+<g font-size="26" font-weight="700" fill="#64c7bb"><text x="726" y="270">L3 + START</text><text x="726" y="382">START</text><text x="726" y="494">WHITE / BACK</text><text x="726" y="603">Y</text></g>
+<g font-size="21" fill="#e1edf1"><text x="726" y="302">Open the existing debug menu during gameplay</text><text x="726" y="414">Select Freecam, then confirm</text><text x="726" y="526">Exit Freecam and restore player commands</text><text x="726" y="635">Hide or show the HUD while Freecam is active</text></g>
+<rect x="64" y="678" width="1312" height="88" rx="14" fill="#213a41"/>
+<text x="94" y="715" fill="#e5f3ee" font-size="23" font-weight="600">Player commands off · Idle animation preserved · World simulation continues</text>
+<text x="94" y="747" fill="#b7cccf" font-size="19">The native camera keeps its original movement and orientation controls.</text>
+<text x="66" y="814" fill="#89a8b9" font-size="19">Diagram of the implemented controls. Full in-game confirmation in Xemu remains required.</text>
+</g></svg>
