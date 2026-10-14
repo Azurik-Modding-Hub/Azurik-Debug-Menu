@@ -5,7 +5,7 @@ from .xbe import allocate, offset, sections, u32
 
 SOURCE_SHA256 = '72e0cf6af079a4024886d9e94812d87d4a35c177135b6196d215abe138866eab'
 SOURCE_SIZE = 1798144
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 ROOT_MENU_LABELS = ('Change level...', 'Play Movie...', 'Game state...', 'Freecam')
 
 
@@ -141,13 +141,18 @@ def patch_xbe(source):
         0x15DE8: 'd94144d81da8471a00',
         0x1FC40: '33c9894804894808c700083c1a00',
         0x19DE24: 'e0c10800',
+        0x84D27: 'c70724de1900',  # Real PlayerPhysics vtable base assignment.
+        0x2FE2A: '897020',  # Real component -> owning Entity assignment.
+        0x60E99: '89b754010000',  # Real Entity -> GameWorld assignment.
+        0x82640: 'c706d0e31900',  # Detached-camera vtable assignment.
+        0x82657: '8b80a800000056e8adcefcff',  # World camera-stack registration.
     }
     for va, expected in signatures.items():
         at = offset(source, va)
         if source[at:at + len(bytes.fromhex(expected))] != bytes.fromhex(expected):
             raise ValueError(f'Unexpected PAL signature at {va:#x}')
     output, raw, va = allocate(source)
-    output[raw:raw + 8] = b'FCDBG02\0'
+    output[raw:raw + 8] = b'FCDBG03\0'
     used = 32
     routines = {}
     def add(name, builder):
@@ -190,6 +195,9 @@ def patch_xbe(source):
         outputSha256=hashlib.sha256(output).hexdigest(), sectionRaw=raw, sectionVA=va,
         sectionBytes=2048, routines=routines, hooks=[{'offset': at, 'bytes': size} for at, size in ranges],
         originalCheatPreserved=True, nativeGameTested=False,
+        playerStasis={'method': 'Player GameWorld active camera stack',
+                      'entityWorldOffset': 0x154, 'worldCameraStackOffset': 0xA8,
+                      'cameraWorldMustMatch': True, 'sceneControllerAssumptionRemoved': True},
         nativeRootMenu={'constructorVA': 0x138D0, 'appendHookVA': 0x13E6D,
                         'labels': list(ROOT_MENU_LABELS), 'originalRowsPreserved': 3,
                         'freecamRowIndex': 3, 'callbackVA': callback,

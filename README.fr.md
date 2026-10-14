@@ -1,6 +1,6 @@
 # Azurik — Menu debug
 
-Version de test **0.1.1** pour le jeu Xbox **PAL / Europe**. Le menu debug déjà intégré au jeu reçoit
+Version de test **0.1.2** pour le jeu Xbox **PAL / Europe**. Le menu debug déjà intégré au jeu reçoit
 une entrée **Freecam** qui active la caméra du code triche d'origine.
 Le monde continue de fonctionner pendant qu'Azurik reste immobile. Sa propre
 animation et sa physique sont suspendues durant la caméra libre.
@@ -15,6 +15,12 @@ endroit que les trois entrées européennes d'origine **Change level...**,
 **Play Movie...** et **Game state...**. Les trois entrées existantes sont
 conservées. Aucun sous-menu supplémentaire n'est nécessaire. Le logiciel
 Windows installe ce changement dans l'ISO ; le menu s'utilise ensuite en jeu.
+
+La version **0.1.2 corrige le déplacement d'Azurik constaté en 0.1.1**. L'ancien
+contrôle confondait le monde du joueur et le contrôleur de scène. Le blocage
+du personnage utilise maintenant la vraie pile de caméras de son monde.
+Il cesse dès que la caméra libre est retirée de cette pile, sans attendre
+la destruction différée de l'objet par le moteur.
 
 ## Utilisation
 

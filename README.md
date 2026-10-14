@@ -11,7 +11,7 @@ applies across **all playable kingdoms** in the supported European build, with
 no W1 restriction. Individual kingdoms still need in-game verification. Activate
 freecam during loaded gameplay, rather than on the title or loading screens.
 
-**Status: experimental 0.1.1.** Isolated x86 tests and ISO readback verification
+**Status: experimental 0.1.2.** Isolated x86 tests and ISO readback verification
 are provided. A complete in-game test is still required, including collisions,
 menu transitions and HUD behaviour. No game executable, ISO, save, model or texture
 is distributed in this repository or its downloads.
@@ -22,6 +22,12 @@ is distributed in this repository or its downloads.
 ![Windows ISO patcher — actual desktop interface](docs/patcher-windows.png)
 
 This screenshot shows the patcher interface, rather than an in-game test result.
+
+Version **0.1.2** fixes the player-stasis check used by 0.1.1. That check confused
+the player's GameWorld with the scene controller, allowing normal player movement
+to continue. Stasis now follows the actual active camera stack in the player's
+own world. It ends as soon as the native camera leaves that stack, including
+before the engine finishes destroying its object.
 
 ## Controls
 

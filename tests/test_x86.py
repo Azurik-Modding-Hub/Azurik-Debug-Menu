@@ -514,3 +514,110 @@ def test_actual_native_simulation_callers_continue_in_freecam(retail, state, sta
         outcomes.append(destination)
     if state != 1:
         assert outcomes[0] == outcomes[1], 'An unrelated native state changed its simulation path'
+
+
+def construct_native_player_world(image):
+    """Use real Entity/PlayerPhysics constructors and the real camera vector.
+
+    Spatial registration, timing scheduling and animated-body setup are engine
+    boundaries. The ownership stores, vtable writes and camera-stack insertion
+    execute from retail instructions instead of being forced by the fixture.
+    """
+    u = machine(image)
+    u.mem_map(0x710000, 0x9000)
+    world, entity, physics, registry, slots, clock, body, detached = (
+        0x710000 + index * 0x1000 for index in range(8))
+    stack = STACK + 0x1000
+    put(u, world + 0xA4, clock)
+    put(u, world + 0xA8, registry)
+    put(u, world + 0x40, 0xDEADC000)  # Not the scene's cheat-manager field.
+    put(u, registry, slots)
+    put(u, registry + 4, slots)
+    put(u, registry + 8, slots + 32)
+    u.mem_write(clock + 0x10, struct.pack('<d', 0.25))
+    boundaries = {0xB7FB0: lambda uc: return_from(uc, 8),
+                  0x21CE0: lambda uc: return_from(uc, 8),
+                  0x61D60: lambda uc: return_from(uc, 12),
+                  0x849F0: lambda uc: return_from(uc, 4),
+                  0xAB920: lambda uc: return_from(uc),
+                  0xAB9B0: lambda uc: return_from(uc, 12),
+                  0x7E290: lambda uc: return_from(uc, 4),
+                  0x7E770: lambda uc: return_from(uc)}
+
+    def call(address, registers, arguments=()):
+        put(u, stack, EXIT)
+        for index, value in enumerate(arguments):
+            put(u, stack + 4 + index * 4, value)
+        u.reg_write(r.UC_X86_REG_ESP, stack)
+        for register, value in registers.items():
+            u.reg_write(register, value)
+        assert run_until(u, address, boundaries, count=10000) == EXIT
+        assert u.reg_read(r.UC_X86_REG_ESP) == stack + 4 + 4 * len(arguments)
+
+    call(0x60DF0, {r.UC_X86_REG_EAX: world, r.UC_X86_REG_EDI: entity})
+    assert get(u, entity + 0x154) == world
+    assert get(u, entity + 0xE4) == clock
+    put(u, entity + 0x178, body)
+    # The animator boundary is not used by the stasis guard; this field is
+    # required only to let the real PlayerPhysics constructor complete.
+    call(0x84D00, {r.UC_X86_REG_EDI: physics}, (entity,))
+    assert get(u, physics) == 0x19DE24
+    assert get(u, physics + 0x20) == entity
+
+    # Install a normal camera with the actual vector registration routine.
+    call(0x4F510, {r.UC_X86_REG_EAX: registry}, (entity,))
+    assert get(u, registry + 4) == slots + 4 and get(u, slots) == entity
+
+    def create_camera():
+        call(0x82630, {r.UC_X86_REG_EAX: world, r.UC_X86_REG_ESI: detached})
+        assert get(u, detached) == 0x19E3D0
+        assert get(u, detached + 0x154) == world
+        assert get(u, registry + 4) == slots + 8
+        assert get(u, slots + 4) == detached
+        assert u.mem_read(detached + 0x195, 1) == b'\x01'
+
+    def player_dispatch():
+        # The real vtable slot is read at runtime. This is not a direct call to
+        # the emitter, and the normal path executes the original tick prologue
+        # until its actual call to the controller-input update at 0x84F40.
+        code = b'\xB9' + struct.pack('<I', physics) + b'\x8B\x01\xFF\x10'
+        code += b'\xE9' + struct.pack('<i', EXIT - (CODE + len(code) + 5))
+        u.mem_write(CODE, code)
+        u.reg_write(r.UC_X86_REG_ESP, stack)
+        return run_until(u, CODE, targets=(EXIT, 0x84F40), count=1000)
+
+    return u, {'world': world, 'entity': entity, 'physics': physics,
+               'registry': registry, 'slots': slots, 'detached': detached,
+               'stack': stack}, create_camera, player_dispatch
+
+
+def test_retail_constructors_and_real_player_vtable_dispatch_use_actual_world_stack(retail):
+    source, image, metadata = retail
+    u, addresses, create_camera, dispatch = construct_native_player_world(image)
+    assert get(u, 0x19DE24) == metadata['routines']['playerStasis']['va']
+    assert get(u, addresses['world'] + 0x40) == 0xDEADC000
+    assert dispatch() == 0x84F40  # Normal gameplay reaches native input update.
+    create_camera()  # Actual retail Entity/camera constructor and registration.
+    assert dispatch() == EXIT  # Native input/movement tick is now suppressed.
+    assert u.reg_read(r.UC_X86_REG_ESP) == addresses['stack']
+
+
+def test_native_camera_removal_releases_player_before_deferred_destruction(retail):
+    source, image, metadata = retail
+    u, addresses, create_camera, dispatch = construct_native_player_world(image)
+    camera, stack = addresses['detached'], addresses['stack']
+    for _ in range(3):
+        create_camera()
+        assert dispatch() == EXIT
+        # WHITE/BACK call this real removal routine. The object stays alive
+        # after it leaves the camera stack, until its deferred-delete boundary.
+        deferred = get(u, 0x19E3D0 + 0xB8)
+        put(u, stack, EXIT)
+        u.reg_write(r.UC_X86_REG_ESP, stack)
+        u.reg_write(r.UC_X86_REG_ESI, camera)
+        assert run_until(u, 0x82760, targets=(deferred,), count=1000) == deferred
+        assert get(u, camera) == 0x19E3D0
+        assert get(u, camera + 0x154) == addresses['world']
+        assert u.mem_read(camera + 0x195, 1) == b'\0'
+        assert get(u, addresses['registry'] + 4) == addresses['slots'] + 4
+        assert dispatch() == 0x84F40, 'Player stayed frozen after the native camera-stack pop'
