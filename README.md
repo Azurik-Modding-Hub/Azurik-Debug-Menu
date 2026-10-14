@@ -3,7 +3,8 @@
 A standalone **PAL / European Xbox test patch** for *Azurik: Rise of Perathia*.
 It extends the **existing in-game debug menu** with **Freecam** and invokes the native
 camera used by the original cheat. The world continues updating while Azurik's
-own physics and animation tick is held. Press **WHITE** to return to gameplay;
+controls are disabled. His idle animation, physics and update scheduling continue.
+Press **WHITE** to return to normal player controls;
 press **Y** to hide or show the HUD.
 
 The patch uses shared game code and the currently loaded gameplay camera. It
@@ -11,7 +12,7 @@ applies across **all playable kingdoms** in the supported European build, with
 no W1 restriction. Individual kingdoms still need in-game verification. Activate
 freecam during loaded gameplay, rather than on the title or loading screens.
 
-**Status: experimental 0.1.2.** Isolated x86 tests and ISO readback verification
+**Version: 1.0.0.** Isolated x86 tests and ISO readback verification
 are provided. A complete in-game test is still required, including collisions,
 menu transitions and HUD behaviour. No game executable, ISO, save, model or texture
 is distributed in this repository or its downloads.
@@ -21,13 +22,14 @@ is distributed in this repository or its downloads.
 
 ![Windows ISO patcher — actual desktop interface](docs/patcher-windows.png)
 
-This screenshot shows the patcher interface, rather than an in-game test result.
+Desktop patcher interface from the initial test release. In-game validation remains pending.
 
-Version **0.1.2** fixes the player-stasis check used by 0.1.1. That check confused
-the player's GameWorld with the scene controller, allowing normal player movement
-to continue. Stasis now follows the actual active camera stack in the player's
-own world. It ends as soon as the native camera leaves that stack, including
-before the engine finishes destroying its object.
+Version **1.0.0** fixes Azurik remaining frozen after leaving Freecam. The earlier
+patch skipped his whole update, including its re-registration for future frames.
+Freecam now uses the game's native blocked-input path: player buttons and movement
+axes are neutralized, while animation and normal frame maintenance continue.
+The native camera-enabled flag restores controls on exit even if a camera pointer
+briefly remains in the stack. Confirm idle animation and exit behavior in Xemu.
 
 ## Controls
 
@@ -51,9 +53,13 @@ there is no extra submenu to open. The three existing entries are preserved.
 The Windows patcher installs this change into your new ISO; it is not the debug
 menu itself.
 
+The native debug-menu header displays **Commande menue - 1.0.0**, replacing
+the old Azurik build label. **L3 + START** opens this menu during gameplay;
+choose **Freecam** and confirm with **START**.
+
 ## Windows
 
-Download the **Windows patcher** from [Releases](https://github.com/Azurik-Modding-Hub/Azurik-Debug-Menu/releases).
+Download the **Windows patcher** from [1.0.0 release](https://github.com/Azurik-Modding-Hub/Azurik-Debug-Menu/releases/tag/v1.0.0).
 Open `Azurik Freecam Patcher.exe`, choose your own Azurik Xbox ISO/XISO, and choose
 a **new** output file. The patcher copies the image, installs the new executable
 in that copy, and verifies the complete game data. It never replaces an existing
@@ -114,9 +120,10 @@ powershell -File ".\Build Windows.ps1"
 
 - The native debug menu's existing tools remain available.
 - Simulation, other actors and effects continue during freecam.
-- Azurik's own physics/animation update is suspended during freecam; normal
-  updates resume on exit. External pushing and scripted relocation need in-game
-  verification.
+- Azurik's movement, attack and jump commands are disabled during Freecam.
+  Animation, idle motion, physics and frame scheduling continue. Normal player
+  controls return on exit. Gravity, moving platforms and scripted actions still
+  follow the game's normal simulation.
 - Camera-only travel does not make player-triggered portals load other levels.
 - The patch changes the executable and its ISO directory pointer. It does not
   modify level assets, save files, EEPROMs or emulator settings.

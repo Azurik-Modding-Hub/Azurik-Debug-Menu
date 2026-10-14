@@ -1,9 +1,10 @@
 # Azurik — Menu debug
 
-Version de test **0.1.2** pour le jeu Xbox **PAL / Europe**. Le menu debug déjà intégré au jeu reçoit
+Version **1.0.0** pour le jeu Xbox **PAL / Europe**. Le menu debug déjà intégré au jeu reçoit
 une entrée **Freecam** qui active la caméra du code triche d'origine.
-Le monde continue de fonctionner pendant qu'Azurik reste immobile. Sa propre
-animation et sa physique sont suspendues durant la caméra libre.
+Le monde continue de fonctionner. Les commandes de déplacement, de saut et
+d'attaque d'Azurik sont neutralisées pendant la caméra libre ; ses animations
+d'attente, sa physique et ses mises à jour continuent normalement.
 
 Le correctif utilise le programme commun du jeu et la caméra du royaume chargé.
 Il s'applique à **tous les royaumes jouables** de cette version européenne,
@@ -16,11 +17,21 @@ endroit que les trois entrées européennes d'origine **Change level...**,
 conservées. Aucun sous-menu supplémentaire n'est nécessaire. Le logiciel
 Windows installe ce changement dans l'ISO ; le menu s'utilise ensuite en jeu.
 
-La version **0.1.2 corrige le déplacement d'Azurik constaté en 0.1.1**. L'ancien
-contrôle confondait le monde du joueur et le contrôleur de scène. Le blocage
-du personnage utilise maintenant la vraie pile de caméras de son monde.
-Il cesse dès que la caméra libre est retirée de cette pile, sans attendre
-la destruction différée de l'objet par le moteur.
+L'ancien texte de build est remplacé dans l'en-tête par
+**Commande menue - 1.0.0**. Pour ouvrir ce menu pendant une partie,
+appuyez sur **L3 + START**, choisissez **Freecam**, puis confirmez avec **START**.
+
+La version **1.0.0 corrige Azurik qui reste figé après la sortie**. Le blocage
+précédent coupait aussi la remise à jour du personnage pour les images suivantes.
+Le correctif bloque maintenant uniquement ses commandes par le chemin natif du
+jeu, et conserve son animation. Le drapeau natif de la caméra libère les commandes
+dès la sortie, même si une ancienne référence à la caméra subsiste brièvement.
+L'animation d'attente et la reprise des commandes restent à confirmer dans Xemu.
+
+La gravité, les plateformes mobiles et les scripts gardent leur fonctionnement
+normal pendant la caméra libre.
+
+[Télécharger le correctif de test 1.0.0](https://github.com/Azurik-Modding-Hub/Azurik-Debug-Menu/releases/tag/v1.0.0)
 
 ## Utilisation
 

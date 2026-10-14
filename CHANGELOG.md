@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.0 — Keep idle animation and restore controls after Freecam
+
+- Show **Commande menue - 1.0.0** in the native debug-menu header and document
+  its L3 + START activation, Freecam selection, White/Back exit and Y HUD toggle.
+
+- Replace the whole-player-tick guard with the native per-player blocked-input path.
+  Movement axes and player buttons are neutralized while animation, physics and
+  update scheduling continue.
+- Preserve the original PlayerPhysics vtable and complete tick. In particular,
+  its frame re-registration can no longer be skipped by the Freecam guard.
+- Require the native camera-enabled byte as well as camera class, stack and world
+  ownership. White/Back exit restores control even with a residual camera entry.
+- Preserve real controller input for camera travel and HUD/exit buttons.
+- Keep the original cheat, four debug-menu rows and live world updates.
+- Include native x86 regressions for the blocked-input path, frame scheduling,
+  animation boundaries and repeated exit/activation. In-game verification is pending.
+
 ## 0.1.2 — Fix player movement during native freecam
 
 - Correct the player-stasis ownership path: `Entity +0x154` is GameWorld,

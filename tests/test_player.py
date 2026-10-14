@@ -1,4 +1,4 @@
-"""Synthetic x86 tests run without a copyrighted game executable."""
+"""Synthetic x86 input-gate tests require no copyrighted game executable."""
 import random
 import struct
 
@@ -7,37 +7,39 @@ from capstone import Cs, CS_ARCH_X86, CS_MODE_32
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_CODE, UC_HOOK_MEM_WRITE
 from unicorn import x86_const as r
 
-from freecam.player import emit_guard, PLAYER_TICK_VA, PLAYER_VTABLE_VA, CAMERA_VTABLE_VA
+from freecam.player import (emit_input_gate, PLAYER_VTABLE_VA, CAMERA_VTABLE_VA,
+                           PLAYER_INPUT_BLOCKED_VA, PLAYER_INPUT_RESUME_VA)
 
-CODE, EXIT, STACK = 0x400000, 0x510000, 0x600800
+CODE, STACK = 0x400000, 0x600800
 COMPONENT, ENTITY, WORLD, REGISTRY, CAMERA, CAMERA_SLOTS = (0x700000 + i * 0x1000 for i in range(6))
-CONTROLLER = 0x800000
+PACKET, CONTROLLER, CONTROLLER_INDEX = 0x800000, 0x801000, 0x1A9A64
 
 
 def machine():
     u = Uc(UC_ARCH_X86, UC_MODE_32)
-    for address, size in ((CODE, 0x1000), (PLAYER_TICK_VA & ~0xFFF, 0x1000),
-                          (EXIT, 0x1000), (STACK & ~0xFFF, 0x1000),
-                          (COMPONENT, 0x6000), (CONTROLLER, 0x1000)):
+    for address, size in ((CODE, 0x1000), (0x84000, 0x2000),
+                          (STACK & ~0xFFF, 0x1000), (0x1A9000, 0x1000),
+                          (COMPONENT, 0x6000), (PACKET, 0x2000)):
         u.mem_map(address, size)
-    u.mem_write(CODE, emit_guard(CODE))
+    u.mem_write(CODE, emit_input_gate(CODE))
     return u
 
 
 def run(u, state, *, missing=None, wrong_component=False, wrong_camera=False,
         flags=0x246, unsafe_later_pointer=False, wrong_world=False,
-        active_camera=None, empty_stack=False, inverted_stack=False, world40=0xDEADC000):
+        active_camera=None, empty_stack=False, inverted_stack=False,
+        world40=0xDEADC000, enabled=1):
     def put(address, value):
         u.mem_write(address, struct.pack('<I', value))
     if active_camera is None:
         active_camera = state == 1
     u.mem_write(COMPONENT, b'\x5a' * 0x6000)
-    u.mem_write(CONTROLLER, bytes(range(256)) * 16)
+    u.mem_write(PACKET, bytes(range(256)) * 32)
+    put(CONTROLLER_INDEX, 3)
     put(COMPONENT, 0x11223344 if wrong_component else PLAYER_VTABLE_VA)
     put(COMPONENT + 0x20, ENTITY)
     put(ENTITY + 0x154, WORLD)
-    # A world is not the scene controller. This deliberately points nowhere;
-    # the old incorrect world+0x40 cheat-manager chain would crash this case.
+    # GameWorld is not the scene controller: the old world+0x40 chain is invalid.
     put(WORLD + 0x40, world40)
     put(WORLD + 0xA8, REGISTRY)
     put(REGISTRY, CAMERA_SLOTS)
@@ -46,6 +48,7 @@ def run(u, state, *, missing=None, wrong_component=False, wrong_camera=False,
     put(CAMERA_SLOTS, CAMERA)
     put(CAMERA, 0x55667788 if wrong_camera or not active_camera else CAMERA_VTABLE_VA)
     put(CAMERA + 0x154, WORLD + 0x800 if wrong_world else WORLD)
+    u.mem_write(CAMERA + 0x195, bytes((enabled,)))
     missing_sites = {'entity': COMPONENT + 0x20, 'world': ENTITY + 0x154,
                      'stack': WORLD + 0xA8, 'camera': CAMERA_SLOTS}
     if missing:
@@ -58,12 +61,11 @@ def run(u, state, *, missing=None, wrong_component=False, wrong_camera=False,
             put(REGISTRY, 0xDEADC004)
             put(REGISTRY + 4, 0xDEADC004 if empty_stack else 0xDEADC000)
     memory = bytes(u.mem_read(COMPONENT, 0x6000))
-    controller = bytes(u.mem_read(CONTROLLER, 0x1000))
-    put(STACK, EXIT)
+    packet_controller = bytes(u.mem_read(PACKET, 0x2000))
     registers = {r.UC_X86_REG_EAX: 0x12345678, r.UC_X86_REG_EBX: 0x23456789,
-                 r.UC_X86_REG_ECX: COMPONENT, r.UC_X86_REG_EDX: 0x3456789A,
-                 r.UC_X86_REG_ESI: 0x456789AB, r.UC_X86_REG_EDI: 0x56789ABC,
-                 r.UC_X86_REG_EBP: 0x6789ABCD}
+                 r.UC_X86_REG_ECX: 0x3456789A, r.UC_X86_REG_EDX: 0x456789AB,
+                 r.UC_X86_REG_ESI: PACKET, r.UC_X86_REG_EDI: 0,
+                 r.UC_X86_REG_EBP: COMPONENT}
     for register, value in registers.items():
         u.reg_write(register, value)
     u.reg_write(r.UC_X86_REG_ESP, STACK)
@@ -71,7 +73,7 @@ def run(u, state, *, missing=None, wrong_component=False, wrong_camera=False,
     original_flags = u.reg_read(r.UC_X86_REG_EFLAGS)
     destinations, writes = [], []
     def code_hook(uc, address, size, userdata):
-        if address in (PLAYER_TICK_VA, EXIT):
+        if address in (PLAYER_INPUT_BLOCKED_VA, PLAYER_INPUT_RESUME_VA):
             destinations.append(address)
             uc.emu_stop()
     def write_hook(uc, access, address, size, value, userdata):
@@ -83,16 +85,16 @@ def run(u, state, *, missing=None, wrong_component=False, wrong_camera=False,
     finally:
         u.hook_del(code_handle)
         u.hook_del(write_handle)
-    stopped = active_camera and not (missing or wrong_component or wrong_camera
+    blocked = active_camera and enabled == 1 and not (missing or wrong_component or wrong_camera
                                     or wrong_world or empty_stack or inverted_stack)
-    assert destinations == [EXIT if stopped else PLAYER_TICK_VA]
-    assert u.reg_read(r.UC_X86_REG_ESP) == STACK + (4 if stopped else 0)
-    assert all(u.reg_read(register) == value for register, value in registers.items())
+    assert destinations == [PLAYER_INPUT_BLOCKED_VA if blocked else PLAYER_INPUT_RESUME_VA]
+    assert u.reg_read(r.UC_X86_REG_ESP) == STACK
+    for register, value in registers.items():
+        assert u.reg_read(register) == (3 if register == r.UC_X86_REG_ECX and not blocked else value)
     assert u.reg_read(r.UC_X86_REG_EFLAGS) == original_flags
     assert bytes(u.mem_read(COMPONENT, 0x6000)) == memory
-    assert bytes(u.mem_read(CONTROLLER, 0x1000)) == controller
-    assert writes == [(STACK - i * 4, 4) for i in range(1, 5)]
-    assert bytes(u.mem_read(STACK, 4)) == struct.pack('<I', EXIT)
+    assert bytes(u.mem_read(PACKET, 0x2000)) == packet_controller
+    assert sorted(writes) == sorted((STACK - i * 4, 4) for i in range(1, 10))
 
 
 def test_all_native_states_and_random_signed_boundaries():
@@ -105,7 +107,7 @@ def test_all_native_states_and_random_signed_boundaries():
 
 
 @pytest.mark.parametrize('missing', ['entity', 'world', 'stack', 'camera'])
-def test_null_chain_never_suppresses_player(missing):
+def test_null_chain_never_blocks_player(missing):
     run(machine(), 1, missing=missing)
 
 
@@ -113,7 +115,7 @@ def test_foreign_component_never_follows_its_unmapped_entity():
     run(machine(), 1, wrong_component=True, unsafe_later_pointer=True)
 
 
-def test_foreign_camera_never_suppresses_player():
+def test_foreign_camera_never_blocks_player():
     run(machine(), 1, wrong_camera=True)
 
 
@@ -123,13 +125,18 @@ def test_empty_or_inverted_stack_never_dereferences_unmapped_slots(kind):
         unsafe_later_pointer=True)
 
 
-def test_camera_from_another_world_never_suppresses_player():
+def test_camera_from_another_world_never_blocks_player():
     run(machine(), 1, wrong_world=True)
 
 
 @pytest.mark.parametrize('world40', [0, 1, 0xFFFFFFFF, 0xDEADC000])
 def test_actual_world_camera_stack_ignores_unrelated_world40_field(world40):
     run(machine(), 1, world40=world40)
+
+
+@pytest.mark.parametrize('enabled', [0, 2, 255])
+def test_disabled_or_invalid_flag_releases_controls_even_with_camera_still_on_stack(enabled):
+    run(machine(), 1, enabled=enabled)
 
 
 def test_active_native_camera_does_not_depend_on_a_fake_cheat_manager_state():
@@ -143,23 +150,24 @@ def test_all_arithmetic_flags_and_enter_exit_without_sticky_state():
     for arithmetic in range(64):
         flags = 0x202 | sum(bit for pos, bit in enumerate((1, 4, 16, 64, 128, 2048))
                             if arithmetic & (1 << pos))
-        for state in (0, 1, 2, 3):
-            run(u, state, flags=flags)
-    for state in (1, 0, 1, 2, 1, 3, 0):
-        run(u, state, flags=0x646)
+        for enabled in (0, 1):
+            run(u, 1, flags=flags, enabled=enabled)
+    for enabled in (1, 0, 1, 0, 1, 0):
+        run(u, 1, flags=0x646, enabled=enabled)
 
 
-def test_complete_code_and_original_tail_destination():
-    code = emit_guard(CODE)
+def test_complete_code_has_only_native_input_destinations_and_never_returns_from_player_tick():
+    code = emit_input_gate(CODE)
     instructions = list(Cs(CS_ARCH_X86, CS_MODE_32).disasm(code, CODE))
-    assert len(code) == 125
+    assert len(code) == 143
     assert sum(i.size for i in instructions) == len(code)
-    assert sum(i.mnemonic in ('je', 'jne', 'jbe') for i in instructions) == 9
-    assert instructions[-1].mnemonic == 'jmp'
-    assert instructions[-1].op_str == hex(PLAYER_TICK_VA)
+    assert sum(i.mnemonic in ('je', 'jne', 'jbe') for i in instructions) == 10
+    assert not any(i.mnemonic.startswith('ret') for i in instructions)
+    assert [i.op_str for i in instructions if i.mnemonic == 'jmp'] == [
+        hex(PLAYER_INPUT_BLOCKED_VA), hex(PLAYER_INPUT_RESUME_VA)]
 
 
 @pytest.mark.parametrize('address', [0, -1, 0xFFFFFFFF, 0xF0000000, '0x400000', None])
 def test_invalid_or_unreachable_address_rejected(address):
     with pytest.raises(ValueError):
-        emit_guard(address)
+        emit_input_gate(address)

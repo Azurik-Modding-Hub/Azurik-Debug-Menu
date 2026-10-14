@@ -9,7 +9,8 @@ Address mapping is read from that XBE's section table.
 | VA `0x15F60` | Three-byte jump to the retail menu-only pause predicate at `0x15F40` |
 | VA `0x13E6D` | Extend the retail menu factory epilogue with one generic action row |
 | VA `0x15DE8` | State-1-only controller handler: Y HUD toggle, WHITE/BACK native exit |
-| VA `0x19DE24` | First PlayerPhysics vtable entry, guarded stasis of only the player tick |
+| VA `0x8500D` | Gate player controls through the native blocked-input branch at `0x84FFE` |
+| VA `0x1395F` | Supply the versioned debug-menu header to the existing native title copy |
 | File `0xE6717` | Enable the retail cheat-buttons default so L3 + START exposes the menu |
 
 The original RT/D-pad/R3/L3 cheat table and camera creation code are unchanged.
@@ -18,6 +19,10 @@ constructor creates **Change level...**, **Play Movie...** and **Game state...**
 **Freecam** is registered as a fourth sibling in the same parent object's
 children vector. It does not replace an existing entry or require a submenu.
 The `0x13E6D` epilogue is reached after all three original registrations.
+The header call at `0x1395F` is replaced by a same-size `MOV EAX` pointing to
+the null-terminated ASCII string **Commande menue - 1.0.0** in FCDEBUG. The
+native parent-title copy and its 100-byte destination remain unchanged. The
+global build formatter and original build strings are preserved for other callers.
 The menu callback uses the native generic-action ABI (`ECX` = menu context,
 `EDX` = row, one stack argument, `RET 4`). Its context's `+0xB4` field is the
 cheat owner, `+0xB8` the gameplay interface. It calls the same action dispatcher
@@ -29,31 +34,37 @@ apply to all playable realms in this executable. The native dispatcher skips
 activation when its current camera stack is empty. Each realm still requires
 full-game testing, and title/loading screens are outside the activation scope.
 
-The player guard checks component class, Entity, GameWorld and the real active
-camera stack before returning from the player component's tick. The chain is
-`PlayerPhysics +0x20 -> Entity +0x154 -> GameWorld +0xA8 -> camera vector`.
-The last vector entry must have the native detached-camera class `0x19E3D0`,
-and its own `+0x154` GameWorld pointer must match the player's world.
-An empty/inverted stack, missing pointer, other camera class or other world
-tail-calls the original `0x8C1E0` entry. The guard preserves flags, EAX, ECX and
-EDX and does not write controller state, actor movement or world scheduling.
-The separate HUD/exit handler consumes the native button edge latches.
+The player input gate checks component class, Entity, GameWorld and the active
+camera stack at `0x8500D` inside the retail control update `0x84F40`. At this
+site EBP is PlayerPhysics, ESI its local input packet and EDI the retail zero.
+The chain is `PlayerPhysics +0x20 -> Entity +0x154 -> GameWorld +0xA8 -> camera vector`.
+The last entry must have the detached-camera class `0x19E3D0`, belong to the
+player's world through its own `+0x154`, and have its enabled byte `+0x195 == 1`.
+No player/world/camera pointer is cached between frames or realms.
 
-The 0.1.1 guard incorrectly treated the Entity's GameWorld as a scene controller
-and then read its unrelated `+0x40` field as a cheat manager. Retail instructions
-at `0x54843` and `0x5485A` show that the scene instead has separate `+0x2C`
-(GameWorld) and `+0x40` (cheat manager) fields. The corrected guard uses the
-same GameWorld camera vector selected by the native camera activation code.
-Real constructors write the tested links and vtables at `0x2FE2A`, `0x60E99`,
-`0x84D27` and `0x82640`; these instructions are checked before installing hooks.
+Active Freecam enters the native branch `0x84FFE`. This masks local player
+buttons and zeroes movement axes, then continues to `0x851DC`. Raw controller
+state is preserved for camera movement and the Y/WHITE/BACK handler.
+Otherwise the gate replays the displaced six-byte controller lookup and resumes
+at `0x85013`. PUSHFD/PUSHAD and POPAD/POPFD preserve registers and flags on
+both paths. Empty/inverted stacks, absent links, mismatching class/world and
+disabled cameras use normal native input handling.
 
-The camera constructor at `0x82630` calls the native registration routine
-`0x4F510`. Native removal at `0x82760` calls `0x4F580` to pop the camera before
-its deferred deletion. Inspecting the current vector each tick releases the
-player immediately on WHITE/BACK exit and avoids retaining stale pointers.
-The separate developer drone uses the same detached-camera class and therefore
-also holds the player if manually enabled; its retail activation setting stays
-unchanged and off by default in this patch.
+The original tick `0x8C1E0` and PlayerPhysics vtable `0x19DE24` are unchanged.
+The whole-tick RET in 0.1.2 skipped `AB920` / `AB9B0` frame re-registration and
+could leave the player unscheduled after exit. The new gate preserves those
+calls, animation boundary `CB4F0`, state handling and physics/root-motion work.
+It disables player commands while retaining idle animation and normal simulation.
+Gravity, moving platforms and scripted actions still follow native behavior.
+
+The 0.1.1 ownership check confused GameWorld with the separate scene controller.
+Their fields are distinct: the scene has `+0x2C` for GameWorld and `+0x40` for
+the cheat manager. The input gate uses the world's actual camera vector.
+Real Entity/PlayerPhysics/camera constructors and blocked-input/exit instructions
+are verified before patching. The native camera removal routine clears byte
+`+0x195` at `0x82775`, so controls return even before deferred camera removal.
+The separate developer drone uses this same native camera class and also blocks
+player controls when enabled; its activation setting remains off by default.
 
 HUD handling changes only the **Show UI** CVar object. It never toggles the
 retail movie-mode freeze byte. Controller edge latches prevent held Y/WHITE
@@ -80,11 +91,11 @@ boundaries. The three simulation sites at `0x54961`, `0x55FE0` and `0x562DB`
 execute their real calls and branches: only state 1 changes from the paused
 path to the live path. These checks establish the binary integration, without
 claiming a displayed Xbox menu or a running-world gameplay test.
-Player-stasis regression checks execute the real Entity, PlayerPhysics and
-camera constructors, native vector insertion/removal and the actual indirect
-vtable-slot call. Normal gameplay reaches the retail controller-update boundary
-at `0x84F40`; an active detached camera returns before it. After removal, that
-boundary is reached again while the camera object still exists. Spatial/timing
-registration and animated-body setup are intercepted engine boundaries.
-This release therefore remains experimental until native testing confirms the
-menu, full camera lifecycle, player stasis, HUD and interactions with enemies.
+Player-input regressions execute the retail constructors, vector handling,
+blocked-input branch and complete PlayerPhysics tick. Intercepted engine
+boundaries record scheduling, animation and downstream state/physics calls.
+Tests cover active Freecam, normal gameplay, disabled residual camera entries,
+White/Back exit and repeated activation. They establish control flow and preserved
+updates; they do not reproduce rendered idle animation or every gameplay response.
+This release remains experimental until Xemu testing confirms idle animation,
+normal control after exit, realm transitions, HUD and enemy interactions.

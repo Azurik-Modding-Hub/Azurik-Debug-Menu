@@ -5,8 +5,9 @@ from .xbe import allocate, offset, sections, u32
 
 SOURCE_SHA256 = '72e0cf6af079a4024886d9e94812d87d4a35c177135b6196d215abe138866eab'
 SOURCE_SIZE = 1798144
-VERSION = '0.1.2'
+VERSION = '1.0.0'
 ROOT_MENU_LABELS = ('Change level...', 'Play Movie...', 'Game state...', 'Freecam')
+ROOT_MENU_TITLE = 'Commande menue - 1.0.0'
 
 
 class Code:
@@ -146,13 +147,17 @@ def patch_xbe(source):
         0x60E99: '89b754010000',  # Real Entity -> GameWorld assignment.
         0x82640: 'c706d0e31900',  # Detached-camera vtable assignment.
         0x82657: '8b80a800000056e8adcefcff',  # World camera-stack registration.
+        0x8500D: '8b0d649a1a00',  # Native PlayerInput controller lookup.
+        0x84FFE: '80662080897e08897e0ce9cf010000',  # Native blocked-input path.
+        0x82775: 'c6869501000000',  # Native exit clears camera enabled byte.
+        0x1395F: 'e8fc9f0700',  # Native root title obtains the original build stamp.
     }
     for va, expected in signatures.items():
         at = offset(source, va)
         if source[at:at + len(bytes.fromhex(expected))] != bytes.fromhex(expected):
             raise ValueError(f'Unexpected PAL signature at {va:#x}')
     output, raw, va = allocate(source)
-    output[raw:raw + 8] = b'FCDBG03\0'
+    output[raw:raw + 8] = b'FCDBG04\0'
     used = 32
     routines = {}
     def add(name, builder):
@@ -169,12 +174,21 @@ def patch_xbe(source):
     callback = add('menuCallback', menu_callback)
     factory = add('menuFactory', lambda addr: menu_factory(addr, callback))
     controls = add('cameraControls', lambda addr: camera_controls(addr, va + 8))
-    from .player import emit_guard
-    player = add('playerStasis', emit_guard)
+    from .player import emit_input_gate
+    player = add('playerInputGate', emit_input_gate)
+    # Keep the global build stamp and adjacent retail strings unchanged. Only
+    # this root menu's title source is replaced; its bounded retail copy stays.
+    title = ROOT_MENU_TITLE.encode('ascii') + b'\0'
+    used = (used + 15) & ~15
+    title_va = va + used
+    if used + len(title) > 2048:
+        raise ValueError('Freecam menu title exceeds the private section')
+    output[raw + used:raw + used + len(title)] = title
     edits = [(0x15F60, bytes.fromhex('ebde90')),
              (0x13E6D, jump(0x13E6D, factory, 7)),
              (0x15DE8, jump(0x15DE8, controls, 9)),
-             (0x19DE24, dword(player))]
+             (0x8500D, jump(0x8500D, player, 6)),
+             (0x1395F, b'\xB8' + dword(title_va))]
     for address, body in edits:
         at = offset(output, address)
         output[at:at + len(body)] = body
@@ -195,10 +209,14 @@ def patch_xbe(source):
         outputSha256=hashlib.sha256(output).hexdigest(), sectionRaw=raw, sectionVA=va,
         sectionBytes=2048, routines=routines, hooks=[{'offset': at, 'bytes': size} for at, size in ranges],
         originalCheatPreserved=True, nativeGameTested=False,
-        playerStasis={'method': 'Player GameWorld active camera stack',
+        playerControls={'method': 'Native per-player blocked-input path',
                       'entityWorldOffset': 0x154, 'worldCameraStackOffset': 0xA8,
-                      'cameraWorldMustMatch': True, 'sceneControllerAssumptionRemoved': True},
+                      'cameraWorldMustMatch': True, 'cameraEnabledByteRequired': 0x195,
+                      'hookVA': 0x8500D, 'blockedPathVA': 0x84FFE,
+                      'wholePlayerTickPreserved': True, 'playerSchedulingPreserved': True,
+                      'rawControllerPreserved': True},
         nativeRootMenu={'constructorVA': 0x138D0, 'appendHookVA': 0x13E6D,
+                        'title': ROOT_MENU_TITLE, 'titleVA': title_va, 'titleHookVA': 0x1395F,
                         'labels': list(ROOT_MENU_LABELS), 'originalRowsPreserved': 3,
                         'freecamRowIndex': 3, 'callbackVA': callback,
                         'activation': 'Native debug menu cheat / L3 + START',
