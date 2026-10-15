@@ -85,7 +85,7 @@ def index_image(path):
     return partition, entries, executables[0]
 
 
-def build_iso(source, destination, progress=None):
+def build_iso(source, destination, progress=None, *, executable_patcher=None):
     source, destination = Path(source).resolve(), Path(destination).resolve()
     report_path = destination.with_suffix(destination.suffix + '.report.json')
     if source == destination or destination.exists() or report_path.exists():
@@ -96,7 +96,7 @@ def build_iso(source, destination, progress=None):
     with source.open('rb') as stream:
         stream.seek(executable['offset'])
         original = stream.read(executable['size'])
-    replacement, report = patch_xbe(original)
+    replacement, report = (executable_patcher or patch_xbe)(original)
     source_size = source.stat().st_size
     appended_at = (source_size + SECTOR - 1) // SECTOR * SECTOR
     directory_edit = struct.pack('<II', (appended_at - partition) // SECTOR, len(replacement))

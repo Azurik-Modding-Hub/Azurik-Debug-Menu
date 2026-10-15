@@ -35,6 +35,14 @@ axes are neutralized, while animation and normal frame maintenance continue.
 The native camera-enabled flag restores controls on exit even if a camera pointer
 briefly remains in the stack. Confirm idle animation and exit behavior in Xemu.
 
+## Development preview: native Debug Laboratory
+
+The `feature/native-debug-laboratory` branch adds nested text-box, oracle-voice
+and Azurik-animation tests to the original menu, plus **Game state → Cles** to
+grant any of the 20 supported key types. Key grants respect the original five
+inventory slots and do not overwrite held keys. This is **1.1.0-dev**, separate
+from the stable 1.0.0 Windows patcher. [Preview workflow and limitations](docs/LABORATORY.md).
+
 ## Controls
 
 | Action | Xbox controller |

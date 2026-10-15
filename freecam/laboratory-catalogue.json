@@ -1,0 +1,1125 @@
+[
+  {
+    "label": "Boites de texte",
+    "children": [
+      {
+        "label": "Tutoriels",
+        "children": [
+          {
+            "label": "training1",
+            "kind": 1,
+            "key": "loc/english/popups/training1"
+          },
+          {
+            "label": "training2",
+            "kind": 1,
+            "key": "loc/english/popups/training2"
+          },
+          {
+            "label": "training3",
+            "kind": 1,
+            "key": "loc/english/popups/training3"
+          },
+          {
+            "label": "training4",
+            "kind": 1,
+            "key": "loc/english/popups/training4"
+          },
+          {
+            "label": "training4p",
+            "kind": 1,
+            "key": "loc/english/popups/training4p"
+          },
+          {
+            "label": "training5",
+            "kind": 1,
+            "key": "loc/english/popups/training5"
+          },
+          {
+            "label": "training6",
+            "kind": 1,
+            "key": "loc/english/popups/training6"
+          }
+        ]
+      },
+      {
+        "label": "Messages demo",
+        "children": [
+          {
+            "label": "demo_acid",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_acid"
+          },
+          {
+            "label": "demo_firewall",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_firewall"
+          },
+          {
+            "label": "demo_firewallb",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_firewallb"
+          },
+          {
+            "label": "demo_ice",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_ice"
+          },
+          {
+            "label": "demo_intro",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_intro"
+          },
+          {
+            "label": "demo_jump",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_jump"
+          },
+          {
+            "label": "demo_jumpb",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_jumpb"
+          }
+        ]
+      },
+      {
+        "label": "Autres messages",
+        "children": [
+          {
+            "label": "6keys",
+            "kind": 1,
+            "key": "loc/english/popups/6keys"
+          },
+          {
+            "label": "a3safe",
+            "kind": 1,
+            "key": "loc/english/popups/a3safe"
+          },
+          {
+            "label": "a3slide",
+            "kind": 1,
+            "key": "loc/english/popups/a3slide"
+          },
+          {
+            "label": "a5cannon",
+            "kind": 1,
+            "key": "loc/english/popups/a5cannon"
+          },
+          {
+            "label": "a5ladder",
+            "kind": 1,
+            "key": "loc/english/popups/a5ladder"
+          },
+          {
+            "label": "air_powerup",
+            "kind": 1,
+            "key": "loc/english/popups/air_powerup"
+          },
+          {
+            "label": "chromatic_powerup",
+            "kind": 1,
+            "key": "loc/english/popups/chromatic_powerup"
+          },
+          {
+            "label": "climb",
+            "kind": 1,
+            "key": "loc/english/popups/climb"
+          },
+          {
+            "label": "collect_obsidians",
+            "kind": 1,
+            "key": "loc/english/popups/collect_obsidians"
+          },
+          {
+            "label": "d1nobridge",
+            "kind": 1,
+            "key": "loc/english/popups/d1nobridge"
+          },
+          {
+            "label": "diamonds",
+            "kind": 1,
+            "key": "loc/english/popups/diamonds"
+          },
+          {
+            "label": "e2silvertele",
+            "kind": 1,
+            "key": "loc/english/popups/e2silvertele"
+          },
+          {
+            "label": "e6daylight",
+            "kind": 1,
+            "key": "loc/english/popups/e6daylight"
+          },
+          {
+            "label": "e6mirrors",
+            "kind": 1,
+            "key": "loc/english/popups/e6mirrors"
+          },
+          {
+            "label": "earth_powerup",
+            "kind": 1,
+            "key": "loc/english/popups/earth_powerup"
+          },
+          {
+            "label": "emeralds",
+            "kind": 1,
+            "key": "loc/english/popups/emeralds"
+          },
+          {
+            "label": "fire_powerup",
+            "kind": 1,
+            "key": "loc/english/popups/fire_powerup"
+          },
+          {
+            "label": "firewall",
+            "kind": 1,
+            "key": "loc/english/popups/firewall"
+          },
+          {
+            "label": "gameover",
+            "kind": 1,
+            "key": "loc/english/popups/gameover"
+          },
+          {
+            "label": "gem",
+            "kind": 1,
+            "key": "loc/english/popups/gem"
+          },
+          {
+            "label": "goldtele",
+            "kind": 1,
+            "key": "loc/english/popups/goldtele"
+          },
+          {
+            "label": "health",
+            "kind": 1,
+            "key": "loc/english/popups/health"
+          },
+          {
+            "label": "joystick",
+            "kind": 1,
+            "key": "loc/english/popups/joystick"
+          },
+          {
+            "label": "jump",
+            "kind": 1,
+            "key": "loc/english/popups/jump"
+          },
+          {
+            "label": "key",
+            "kind": 1,
+            "key": "loc/english/popups/key"
+          },
+          {
+            "label": "life",
+            "kind": 1,
+            "key": "loc/english/popups/life"
+          },
+          {
+            "label": "obsidian010_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian010_"
+          },
+          {
+            "label": "obsidian020_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian020_"
+          },
+          {
+            "label": "obsidian030_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian030_"
+          },
+          {
+            "label": "obsidian040_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian040_"
+          },
+          {
+            "label": "obsidian050_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian050_"
+          },
+          {
+            "label": "obsidian060_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian060_"
+          },
+          {
+            "label": "obsidian070_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian070_"
+          },
+          {
+            "label": "obsidian080_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian080_"
+          },
+          {
+            "label": "obsidian090_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian090_"
+          },
+          {
+            "label": "obsidian100_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian100_"
+          },
+          {
+            "label": "rubies",
+            "kind": 1,
+            "key": "loc/english/popups/rubies"
+          },
+          {
+            "label": "sapphires",
+            "kind": 1,
+            "key": "loc/english/popups/sapphires"
+          },
+          {
+            "label": "save_platform",
+            "kind": 1,
+            "key": "loc/english/popups/save_platform"
+          },
+          {
+            "label": "seal_air",
+            "kind": 1,
+            "key": "loc/english/popups/seal_air"
+          },
+          {
+            "label": "seal_death",
+            "kind": 1,
+            "key": "loc/english/popups/seal_death"
+          },
+          {
+            "label": "seal_earth",
+            "kind": 1,
+            "key": "loc/english/popups/seal_earth"
+          },
+          {
+            "label": "seal_fire",
+            "kind": 1,
+            "key": "loc/english/popups/seal_fire"
+          },
+          {
+            "label": "seal_life",
+            "kind": 1,
+            "key": "loc/english/popups/seal_life"
+          },
+          {
+            "label": "seal_water",
+            "kind": 1,
+            "key": "loc/english/popups/seal_water"
+          },
+          {
+            "label": "swim",
+            "kind": 1,
+            "key": "loc/english/popups/swim"
+          },
+          {
+            "label": "switch",
+            "kind": 1,
+            "key": "loc/english/popups/switch"
+          },
+          {
+            "label": "w1periscope",
+            "kind": 1,
+            "key": "loc/english/popups/w1periscope"
+          },
+          {
+            "label": "w1torpedo",
+            "kind": 1,
+            "key": "loc/english/popups/w1torpedo"
+          },
+          {
+            "label": "w2firewall",
+            "kind": 1,
+            "key": "loc/english/popups/w2firewall"
+          },
+          {
+            "label": "w2spout",
+            "kind": 1,
+            "key": "loc/english/popups/w2spout"
+          },
+          {
+            "label": "water_powerup",
+            "kind": 1,
+            "key": "loc/english/popups/water_powerup"
+          },
+          {
+            "label": "waterspout",
+            "kind": 1,
+            "key": "loc/english/popups/waterspout"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "label": "Oracles",
+    "children": [
+      {
+        "label": "Royaumes",
+        "children": [
+          {
+            "label": "eld_a1_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_a1_verb"
+          },
+          {
+            "label": "eld_a3_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_a3_verb"
+          },
+          {
+            "label": "eld_a5_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_a5_verb"
+          },
+          {
+            "label": "eld_a6_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_a6_verb"
+          },
+          {
+            "label": "eld_d1_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_d1_verb"
+          },
+          {
+            "label": "eld_d2_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_d2_verb"
+          },
+          {
+            "label": "eld_e2_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_e2_verb"
+          },
+          {
+            "label": "eld_e5_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_e5_verb"
+          },
+          {
+            "label": "eld_e6_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_e6_verb"
+          },
+          {
+            "label": "eld_e7_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_e7_verb"
+          },
+          {
+            "label": "eld_f1_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_f1_verb"
+          },
+          {
+            "label": "eld_f2_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_f2_verb"
+          },
+          {
+            "label": "eld_f3_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_f3_verb"
+          },
+          {
+            "label": "eld_f4_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_f4_verb"
+          },
+          {
+            "label": "eld_f6_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_f6_verb"
+          },
+          {
+            "label": "eld_l1_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_l1_verb"
+          },
+          {
+            "label": "eld_town_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_town_verb"
+          },
+          {
+            "label": "eld_w2_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_w2_verb"
+          },
+          {
+            "label": "eld_w3_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_w3_verb"
+          },
+          {
+            "label": "eld_w4_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_w4_verb"
+          }
+        ]
+      },
+      {
+        "label": "Fragments et sceaux",
+        "children": [
+          {
+            "label": "eld_airfrag1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_airfrag1"
+          },
+          {
+            "label": "eld_airfrag2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_airfrag2"
+          },
+          {
+            "label": "eld_airfrag3",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_airfrag3"
+          },
+          {
+            "label": "eld_lifefrag1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_lifefrag1"
+          },
+          {
+            "label": "eld_seal_air",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_air"
+          },
+          {
+            "label": "eld_seal_earth",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_earth"
+          },
+          {
+            "label": "eld_seal_fire",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_fire"
+          },
+          {
+            "label": "eld_seal_life",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_life"
+          },
+          {
+            "label": "eld_seal_water",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_water"
+          }
+        ]
+      },
+      {
+        "label": "Conseils",
+        "children": [
+          {
+            "label": "eld_deathhint1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_deathhint1"
+          },
+          {
+            "label": "eld_w1_hint1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_w1_hint1"
+          },
+          {
+            "label": "eld_w1_hint2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_w1_hint2"
+          },
+          {
+            "label": "hint_air1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_air1"
+          },
+          {
+            "label": "hint_air2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_air2"
+          },
+          {
+            "label": "hint_air3",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_air3"
+          },
+          {
+            "label": "hint_earth1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_earth1"
+          },
+          {
+            "label": "hint_earth2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_earth2"
+          },
+          {
+            "label": "hint_earth3",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_earth3"
+          },
+          {
+            "label": "hint_fire1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_fire1"
+          },
+          {
+            "label": "hint_fire2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_fire2"
+          },
+          {
+            "label": "hint_fire3",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_fire3"
+          },
+          {
+            "label": "hint_none",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_none"
+          },
+          {
+            "label": "hint_water2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_water2"
+          },
+          {
+            "label": "hint_water3",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_water3"
+          },
+          {
+            "label": "level_done",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/level_done"
+          },
+          {
+            "label": "nokey",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/nokey"
+          },
+          {
+            "label": "w1_game_start",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/w1_game_start"
+          },
+          {
+            "label": "w1_general",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/w1_general"
+          },
+          {
+            "label": "w1_steam",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/w1_steam"
+          }
+        ]
+      },
+      {
+        "label": "Arreter voix / animation",
+        "kind": 4
+      }
+    ]
+  },
+  {
+    "label": "Animations",
+    "children": [
+      {
+        "label": "Azurik",
+        "children": [
+          {
+            "label": "Repos",
+            "children": [
+              {
+                "label": "attack idle",
+                "kind": 3,
+                "key": "characters/garret4/attack_idle"
+              },
+              {
+                "label": "attack idle 1",
+                "kind": 3,
+                "key": "characters/garret4/attack_idle_1"
+              },
+              {
+                "label": "climb idle",
+                "kind": 3,
+                "key": "characters/garret4/climb_idle"
+              },
+              {
+                "label": "idle",
+                "kind": 3,
+                "key": "characters/garret4/idle"
+              },
+              {
+                "label": "idle 1",
+                "kind": 3,
+                "key": "characters/garret4/idle_1"
+              },
+              {
+                "label": "idle 2",
+                "kind": 3,
+                "key": "characters/garret4/idle_2"
+              },
+              {
+                "label": "idle 3",
+                "kind": 3,
+                "key": "characters/garret4/idle_3"
+              },
+              {
+                "label": "idle 4",
+                "kind": 3,
+                "key": "characters/garret4/idle_4"
+              },
+              {
+                "label": "swim idle",
+                "kind": 3,
+                "key": "characters/garret4/swim_idle"
+              },
+              {
+                "label": "swim idle down",
+                "kind": 3,
+                "key": "characters/garret4/swim_idle_down"
+              },
+              {
+                "label": "swim idle up",
+                "kind": 3,
+                "key": "characters/garret4/swim_idle_up"
+              }
+            ]
+          },
+          {
+            "label": "Actions",
+            "children": [
+              {
+                "label": "360 basic attack",
+                "kind": 3,
+                "key": "characters/garret4/360_basic_attack"
+              },
+              {
+                "label": "360 ledge",
+                "kind": 3,
+                "key": "characters/garret4/360_ledge"
+              },
+              {
+                "label": "360 sweep",
+                "kind": 3,
+                "key": "characters/garret4/360_sweep"
+              },
+              {
+                "label": "attack 1",
+                "kind": 3,
+                "key": "characters/garret4/attack_1"
+              },
+              {
+                "label": "attack 10",
+                "kind": 3,
+                "key": "characters/garret4/attack_10"
+              },
+              {
+                "label": "attack 12",
+                "kind": 3,
+                "key": "characters/garret4/attack_12"
+              },
+              {
+                "label": "attack 13",
+                "kind": 3,
+                "key": "characters/garret4/attack_13"
+              },
+              {
+                "label": "attack 14",
+                "kind": 3,
+                "key": "characters/garret4/attack_14"
+              },
+              {
+                "label": "attack 15",
+                "kind": 3,
+                "key": "characters/garret4/attack_15"
+              },
+              {
+                "label": "attack 16",
+                "kind": 3,
+                "key": "characters/garret4/attack_16"
+              },
+              {
+                "label": "attack 17",
+                "kind": 3,
+                "key": "characters/garret4/attack_17"
+              },
+              {
+                "label": "attack 2",
+                "kind": 3,
+                "key": "characters/garret4/attack_2"
+              },
+              {
+                "label": "attack 3",
+                "kind": 3,
+                "key": "characters/garret4/attack_3"
+              },
+              {
+                "label": "attack 5",
+                "kind": 3,
+                "key": "characters/garret4/attack_5"
+              },
+              {
+                "label": "attack 6",
+                "kind": 3,
+                "key": "characters/garret4/attack_6"
+              },
+              {
+                "label": "attack 7",
+                "kind": 3,
+                "key": "characters/garret4/attack_7"
+              },
+              {
+                "label": "attack 8",
+                "kind": 3,
+                "key": "characters/garret4/attack_8"
+              },
+              {
+                "label": "attack 9",
+                "kind": 3,
+                "key": "characters/garret4/attack_9"
+              },
+              {
+                "label": "attack back",
+                "kind": 3,
+                "key": "characters/garret4/attack_back"
+              },
+              {
+                "label": "attack back kick",
+                "kind": 3,
+                "key": "characters/garret4/attack_back_kick"
+              },
+              {
+                "label": "climb down",
+                "kind": 3,
+                "key": "characters/garret4/climb_down"
+              },
+              {
+                "label": "climb down edge",
+                "kind": 3,
+                "key": "characters/garret4/climb_down_edge"
+              },
+              {
+                "label": "climb drop",
+                "kind": 3,
+                "key": "characters/garret4/climb_drop"
+              },
+              {
+                "label": "climb from jump",
+                "kind": 3,
+                "key": "characters/garret4/climb_from_jump"
+              },
+              {
+                "label": "climb left",
+                "kind": 3,
+                "key": "characters/garret4/climb_left"
+              },
+              {
+                "label": "climb right",
+                "kind": 3,
+                "key": "characters/garret4/climb_right"
+              },
+              {
+                "label": "climb start",
+                "kind": 3,
+                "key": "characters/garret4/climb_start"
+              },
+              {
+                "label": "climb up",
+                "kind": 3,
+                "key": "characters/garret4/climb_up"
+              },
+              {
+                "label": "climb up edge",
+                "kind": 3,
+                "key": "characters/garret4/climb_up_edge"
+              },
+              {
+                "label": "die",
+                "kind": 3,
+                "key": "characters/garret4/die"
+              },
+              {
+                "label": "die 1",
+                "kind": 3,
+                "key": "characters/garret4/die_1"
+              },
+              {
+                "label": "die 2",
+                "kind": 3,
+                "key": "characters/garret4/die_2"
+              },
+              {
+                "label": "die elevator",
+                "kind": 3,
+                "key": "characters/garret4/die_elevator"
+              },
+              {
+                "label": "dive",
+                "kind": 3,
+                "key": "characters/garret4/dive"
+              },
+              {
+                "label": "drowning",
+                "kind": 3,
+                "key": "characters/garret4/drowning"
+              },
+              {
+                "label": "elemental attack",
+                "kind": 3,
+                "key": "characters/garret4/elemental_attack"
+              },
+              {
+                "label": "elemental attack 2",
+                "kind": 3,
+                "key": "characters/garret4/elemental_attack_2"
+              },
+              {
+                "label": "elemental attack 3",
+                "kind": 3,
+                "key": "characters/garret4/elemental_attack_3"
+              },
+              {
+                "label": "fall",
+                "kind": 3,
+                "key": "characters/garret4/fall"
+              },
+              {
+                "label": "fall attack",
+                "kind": 3,
+                "key": "characters/garret4/fall_attack"
+              },
+              {
+                "label": "fall big",
+                "kind": 3,
+                "key": "characters/garret4/fall_big"
+              },
+              {
+                "label": "fly",
+                "kind": 3,
+                "key": "characters/garret4/fly"
+              },
+              {
+                "label": "hang",
+                "kind": 3,
+                "key": "characters/garret4/hang"
+              },
+              {
+                "label": "hang start",
+                "kind": 3,
+                "key": "characters/garret4/hang_start"
+              },
+              {
+                "label": "hoist",
+                "kind": 3,
+                "key": "characters/garret4/hoist"
+              },
+              {
+                "label": "hoist 2",
+                "kind": 3,
+                "key": "characters/garret4/hoist_2"
+              },
+              {
+                "label": "hoist waist",
+                "kind": 3,
+                "key": "characters/garret4/hoist_waist"
+              },
+              {
+                "label": "hose attack 1",
+                "kind": 3,
+                "key": "characters/garret4/hose_attack_1"
+              },
+              {
+                "label": "hose attack 2",
+                "kind": 3,
+                "key": "characters/garret4/hose_attack_2"
+              },
+              {
+                "label": "hose attack 3",
+                "kind": 3,
+                "key": "characters/garret4/hose_attack_3"
+              },
+              {
+                "label": "hover",
+                "kind": 3,
+                "key": "characters/garret4/hover"
+              },
+              {
+                "label": "jump",
+                "kind": 3,
+                "key": "characters/garret4/jump"
+              },
+              {
+                "label": "jump standing",
+                "kind": 3,
+                "key": "characters/garret4/jump_standing"
+              },
+              {
+                "label": "ouch 1",
+                "kind": 3,
+                "key": "characters/garret4/ouch_1"
+              },
+              {
+                "label": "ouch 1b",
+                "kind": 3,
+                "key": "characters/garret4/ouch_1b"
+              },
+              {
+                "label": "ouch 1l",
+                "kind": 3,
+                "key": "characters/garret4/ouch_1l"
+              },
+              {
+                "label": "ouch 1r",
+                "kind": 3,
+                "key": "characters/garret4/ouch_1r"
+              },
+              {
+                "label": "ouch 1t",
+                "kind": 3,
+                "key": "characters/garret4/ouch_1t"
+              },
+              {
+                "label": "ouch elevator",
+                "kind": 3,
+                "key": "characters/garret4/ouch_elevator"
+              },
+              {
+                "label": "prophecy",
+                "kind": 3,
+                "key": "characters/garret4/prophecy"
+              },
+              {
+                "label": "redone jump 1",
+                "kind": 3,
+                "key": "characters/garret4/redone_jump_1"
+              },
+              {
+                "label": "roll forward",
+                "kind": 3,
+                "key": "characters/garret4/roll_forward"
+              },
+              {
+                "label": "run",
+                "kind": 3,
+                "key": "characters/garret4/run"
+              },
+              {
+                "label": "run backwards",
+                "kind": 3,
+                "key": "characters/garret4/run_backwards"
+              },
+              {
+                "label": "slide",
+                "kind": 3,
+                "key": "characters/garret4/slide"
+              },
+              {
+                "label": "smash attack 1",
+                "kind": 3,
+                "key": "characters/garret4/smash_attack_1"
+              },
+              {
+                "label": "smash attack 2",
+                "kind": 3,
+                "key": "characters/garret4/smash_attack_2"
+              },
+              {
+                "label": "smash attack 3",
+                "kind": 3,
+                "key": "characters/garret4/smash_attack_3"
+              },
+              {
+                "label": "step down",
+                "kind": 3,
+                "key": "characters/garret4/step_down"
+              },
+              {
+                "label": "step up",
+                "kind": 3,
+                "key": "characters/garret4/step_up"
+              },
+              {
+                "label": "superjump",
+                "kind": 3,
+                "key": "characters/garret4/superjump"
+              },
+              {
+                "label": "swim 1",
+                "kind": 3,
+                "key": "characters/garret4/swim_1"
+              },
+              {
+                "label": "swim 2",
+                "kind": 3,
+                "key": "characters/garret4/swim_2"
+              },
+              {
+                "label": "swim start",
+                "kind": 3,
+                "key": "characters/garret4/swim_start"
+              },
+              {
+                "label": "touchdown",
+                "kind": 3,
+                "key": "characters/garret4/touchdown"
+              },
+              {
+                "label": "use",
+                "kind": 3,
+                "key": "characters/garret4/use"
+              },
+              {
+                "label": "victory 1",
+                "kind": 3,
+                "key": "characters/garret4/victory_1"
+              },
+              {
+                "label": "victory 2",
+                "kind": 3,
+                "key": "characters/garret4/victory_2"
+              },
+              {
+                "label": "victory 3",
+                "kind": 3,
+                "key": "characters/garret4/victory_3"
+              },
+              {
+                "label": "victory 4",
+                "kind": 3,
+                "key": "characters/garret4/victory_4"
+              },
+              {
+                "label": "victory 5",
+                "kind": 3,
+                "key": "characters/garret4/victory_5"
+              },
+              {
+                "label": "victory 6",
+                "kind": 3,
+                "key": "characters/garret4/victory_6"
+              },
+              {
+                "label": "walk",
+                "kind": 3,
+                "key": "characters/garret4/walk"
+              },
+              {
+                "label": "walk backwards",
+                "kind": 3,
+                "key": "characters/garret4/walk_backwards"
+              }
+            ]
+          },
+          {
+            "label": "Arreter voix / animation",
+            "kind": 4
+          }
+        ]
+      }
+    ]
+  }
+]

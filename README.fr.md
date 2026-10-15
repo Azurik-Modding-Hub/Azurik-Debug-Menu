@@ -79,3 +79,11 @@ la modification dans une nouvelle ISO; le menu s'utilise ensuite dans Azurik.
 
 [Documentation anglaise et installation depuis Python](README.md)
 · [Azurik Level Editor](https://github.com/Azurik-Modding-Hub/Azurik-Level-Editor)
+
+## Aperçu de développement 1.1.0-dev
+
+La branche de développement ajoute des sous-menus natifs pour les boîtes de
+texte, les voix des oracles et les animations d’Azurik. **Game state → Cles**
+permet de donner chacune des 20 clés, dans la limite des cinq places du jeu,
+sans remplacer les clés déjà portées. Les animations propres aux oracles
+restent à relier ; leurs voix sont disponibles. [Fonctionnement et limites](docs/LABORATORY.md).
