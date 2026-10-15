@@ -16,6 +16,7 @@ from freecam.activation import emit_poll, emit_dispatch
 WORLD, ACTOR = 0x70A000, 0x70B000
 POLL, DISPATCH = native.CODE, native.CODE + 0x700
 WORLD_METHOD = native.CODE + 0xE00
+PLAYER_METHOD = native.CODE + 0xE10
 ACTIVE = 0x1A9A64
 VALUES = {'A': 0x18, 'B': 0x1C, 'White': 0x2C, 'L3': 0x38, 'Start': 0x40}
 LATCHES = {'A': 0x48, 'B': 0x49, 'White': 0x4D, 'L3': 0x50, 'Start': 0x52}
@@ -36,10 +37,12 @@ class ChordMachine:
         native.put(self.u, ACTIVE, index)
         native.put(self.u, native.INTERFACE, native.PARENT)
         native.put(self.u, native.PARENT, WORLD_METHOD)
+        native.put(self.u, native.PARENT + 4, PLAYER_METHOD)
         native.put(self.u, WORLD + 0xCC, ACTOR)
         native.put(self.u, native.OWNER + 0x20, native.VECTOR)
         native.put(self.u, native.OWNER + 0x24, native.VECTOR)
         self.world = WORLD
+        self.player = ACTOR
         self.calls = []
 
     def controller(self, index=None):
@@ -60,7 +63,7 @@ class ChordMachine:
             index = native.get(self.u, ACTIVE)
         if index == 4:
             index = 0
-        return self.u.mem_read(native.STATE + index, 1)[0]
+        return native.get(self.u, native.STATE + index * 16)
 
     def raw(self, index=None):
         return bytes(self.u.mem_read(self.controller(index), 0x48))
@@ -68,6 +71,11 @@ class ChordMachine:
     def get_world(self, uc):
         assert uc.reg_read(r.UC_X86_REG_ECX) == native.INTERFACE
         uc.reg_write(r.UC_X86_REG_EAX, self.world)
+        native.return_from(uc)
+
+    def get_player(self, uc):
+        assert uc.reg_read(r.UC_X86_REG_ECX) == native.INTERFACE
+        uc.reg_write(r.UC_X86_REG_EAX, self.player)
         native.return_from(uc)
 
     def action(self, uc):
@@ -83,235 +91,180 @@ class ChordMachine:
         native.put(self.u, native.OWNER + 0x1C, state)
         native.put(self.u, native.OWNER + 0x24, native.VECTOR)
 
-    def poll(self, owner=native.OWNER, interface=native.INTERFACE):
+    def poll(self, owner=native.OWNER, interface=native.INTERFACE, delta=1/60):
         native.put(self.u, native.STACK, native.EXIT)
         native.put(self.u, native.STACK + 4, owner)
         native.put(self.u, native.STACK + 8, interface)
+        self.u.mem_write(native.STACK + 12, struct.pack("<f", delta))
+        self.u.reg_write(r.UC_X86_REG_FPCW, 0x37f)
+        self.u.reg_write(r.UC_X86_REG_FPSW, 0)
         self.u.reg_write(r.UC_X86_REG_ESP, native.STACK)
         for reg, value in SAVED.items():
             self.u.reg_write(reg, value)
-        native.run_until(self.u, POLL, {WORLD_METHOD: self.get_world, 0x16610: self.action})
-        assert self.u.reg_read(r.UC_X86_REG_ESP) == native.STACK + 12
+        native.run_until(self.u, POLL, {WORLD_METHOD: self.get_world, PLAYER_METHOD: self.get_player, 0x16610: self.action})
+        assert self.u.reg_read(r.UC_X86_REG_ESP) == native.STACK + 16
         for reg in [r.UC_X86_REG_EBX, r.UC_X86_REG_ESI, r.UC_X86_REG_EDI, r.UC_X86_REG_EBP]:
             assert self.u.reg_read(reg) == SAVED[reg]
         return self.u.reg_read(r.UC_X86_REG_EAX)
 
 
-@pytest.mark.parametrize('order', list(permutations(WAB)))
-def test_each_partial_button_order_opens_only_when_chord_complete(order):
-    f = ChordMachine()
-    held = set()
-    for index, name in enumerate(order):
-        held.add(name)
-        f.buttons(held)
-        before = f.raw()
-        assert f.poll() == (1 if index == 2 else 0)
-        assert f.raw() == before
-        assert len(f.calls) == (1 if index == 2 else 0)
-    assert f.mode() == 1
-    assert all(f.u.mem_read(f.controller() + LATCHES[name], 1) == b'\x01' for name in WAB)
+
+@pytest.mark.parametrize('gap',[.01,.1,.2,.249])
+def test_released_white_then_a_then_b_completes_within_one_second(gap):
+    f=ChordMachine()
+    for held,expected in [({'White'},0),(set(),0),({'A'},0),(set(),0),({'B'},1)]:
+        f.buttons(held);before=f.raw();assert f.poll(delta=gap)==expected;assert f.raw()==before
+    assert len(f.calls)==1 and f.mode()==3
 
 
-def test_prior_gameplay_edges_do_not_prevent_completing_the_held_chord():
-    f = ChordMachine()
-    f.buttons({'A', 'B'})
-    f.latch('A', 1)
-    f.latch('B', 1)
-    assert f.poll() == 0
-    f.buttons(WAB)
-    assert f.poll() == 1
-    assert len(f.calls) == 1
+@pytest.mark.parametrize('gap',[.26,.4,.6])
+def test_sequence_expires_one_second_from_white_not_from_last_button(gap):
+    f=ChordMachine()
+    for held in [{'White'},set(),{'A'},set(),{'B'}]:
+        f.buttons(held);assert f.poll(delta=gap)==0
+    assert not f.calls and f.mode()==0
 
 
-@pytest.mark.parametrize('chord,mode', [(WAB, 1), (LEGACY, 2)])
-def test_hold_partial_release_and_full_release_before_reopening(chord, mode):
-    f = ChordMachine()
-    f.buttons(chord)
-    assert f.poll() == 1
-    assert f.mode() == mode
-    for _ in range(4):
-        assert f.poll() == 1
-    assert len(f.calls) == 1
-    f.close_menu()
-    f.buttons(chord[1:])
-    assert f.poll() == 1
-    assert f.mode() == mode
-    f.buttons(chord)
-    assert f.poll() == 1
-    assert len(f.calls) == 1
-    f.buttons(set())
-    assert f.poll() == 0
-    assert f.mode() == 0
-    # Mimic native polling rearming consumed edges after complete release.
-    for name in chord:
-        f.latch(name, 0)
-    f.buttons(chord)
-    assert f.poll() == 1
-    assert len(f.calls) == 2
+def test_exact_one_second_and_overlapping_presses_are_supported():
+    f=ChordMachine();f.buttons({'White'});assert f.poll()==0
+    for held,delta,expected in [({'A'},.25,0),(set(),.25,0),({'B'},.5,1)]:
+        f.buttons(held);assert f.poll(delta=delta)==expected
+    g=ChordMachine()
+    for held,expected in [({'White'},0),({'White','A'},0),(set(WAB),1)]:
+        g.buttons(held);assert g.poll()==expected
+    assert len(g.calls)==1
 
 
-@pytest.mark.parametrize('index', range(5))
-def test_all_four_controllers_and_native_index4_fallback(index):
-    f = ChordMachine(index)
-    f.buttons(WAB)
-    before = f.raw()
-    assert f.poll() == 1
-    assert f.mode() == 1
-    assert f.raw() == before
-    modes = bytes(f.u.mem_read(native.STATE, 4))
-    selected = 0 if index == 4 else index
-    assert modes == bytes(1 if n == selected else 0 for n in range(4))
-    assert len(f.calls) == 1
+@pytest.mark.parametrize('order',[p for p in permutations(WAB) if p!=WAB])
+def test_wrong_order_without_overlapping_does_not_activate(order):
+    f=ChordMachine()
+    for name in order:
+        f.buttons({name});assert f.poll()==0
+        f.buttons(set());assert f.poll()==0
+    assert not f.calls
 
 
-def test_each_controller_owns_an_independent_debounce_mode():
-    f = ChordMachine(0)
-    f.buttons(WAB)
-    assert f.poll() == 1
-    f.close_menu()
-    native.put(f.u, ACTIVE, 1)
-    f.buttons(WAB)
-    assert f.poll() == 1
-    assert bytes(f.u.mem_read(native.STATE, 4)) == b'\x01\x01\0\0'
-    assert len(f.calls) == 2
+def test_raw_new_edges_are_used_even_if_native_consumed_flags_are_set():
+    f=ChordMachine()
+    for name in WAB:f.latch(name,1)
+    for name in WAB:
+        f.buttons({name});result=f.poll()
+        if name!='B':f.buttons(set());assert f.poll()==0
+    assert result==1 and len(f.calls)==1
 
 
-@pytest.mark.parametrize('index', [5, 12, 0xFFFFFFFF])
+@pytest.mark.parametrize('chord,mode',[(WAB,3),(LEGACY,4)])
+def test_hold_partial_release_and_full_release_before_reopening(chord,mode):
+    f=ChordMachine();f.buttons(chord);assert f.poll()==1;assert f.mode()==mode
+    for _ in range(4):assert f.poll()==1
+    f.close_menu();f.buttons(chord[1:]);assert f.poll()==1
+    f.buttons(chord);assert f.poll()==1;assert len(f.calls)==1
+    f.buttons(set());assert f.poll()==0;assert f.mode()==0
+    f.buttons(chord);assert f.poll()==1;assert len(f.calls)==2
+
+
+@pytest.mark.parametrize('index',range(5))
+def test_controller_states_and_native_index4_fallback(index):
+    f=ChordMachine(index);f.buttons(WAB);before=f.raw();assert f.poll()==1
+    assert f.raw()==before and f.mode()==3
+    selected=0 if index==4 else index
+    assert [native.get(f.u,native.STATE+n*16)for n in range(4)]==[3 if n==selected else 0 for n in range(4)]
+
+
+def test_each_controller_owns_its_sequence_timer_and_previous_edges():
+    f=ChordMachine(0);f.buttons({'White'});assert f.poll()==0
+    native.put(f.u,ACTIVE,1);f.buttons(WAB);assert f.poll()==1
+    assert native.get(f.u,native.STATE)==1 and native.get(f.u,native.STATE+16)==3
+
+
+@pytest.mark.parametrize('index',[5,12,0xffffffff])
 def test_invalid_controller_index_has_no_effect(index):
-    f = ChordMachine(index)
-    f.buttons(WAB, index=0)
-    before = bytes(f.u.mem_read(native.STATE, 4))
-    assert f.poll() == 0
-    assert bytes(f.u.mem_read(native.STATE, 4)) == before
-    assert f.calls == []
+    f=ChordMachine(index);f.buttons(WAB,index=0);before=bytes(f.u.mem_read(native.STATE,64))
+    assert f.poll()==0 and not f.calls
+    assert bytes(f.u.mem_read(native.STATE,64))==before
 
 
-@pytest.mark.parametrize('case', ['no-owner', 'no-interface', 'no-world', 'no-player', 'null-vtable', 'null-world-method'])
-def test_no_attached_gameplay_world_does_not_activate(case):
-    f = ChordMachine()
-    f.buttons(WAB)
-    owner = native.OWNER
-    interface = native.INTERFACE
-    if case == 'no-owner':
-        owner = 0
-    elif case == 'no-interface':
-        interface = 0
-    elif case == 'no-world':
-        f.world = 0
-    elif case == 'no-player':
-        native.put(f.u, WORLD + 0xCC, 0)
-    elif case == 'null-vtable':
-        native.put(f.u, native.INTERFACE, 0)
-    else:
-        native.put(f.u, native.PARENT, 0)
-    before = f.raw()
-    assert f.poll(owner, interface) == 0
-    assert f.calls == []
-    # Detecting the chord arms its debounce even when a gameplay prerequisite
-    # is absent. It must be fully released before a later successful opening.
-    assert f.mode() == 1
-    assert f.raw() == before
+@pytest.mark.parametrize('case',['no-owner','no-interface','no-world','no-player','null-vtable','null-world-method','null-player-method'])
+def test_no_live_world_or_player_cancels_sequence_without_consuming_buttons(case):
+    f=ChordMachine();f.buttons(WAB);owner,interface=native.OWNER,native.INTERFACE
+    if case=='no-owner':owner=0
+    elif case=='no-interface':interface=0
+    elif case=='no-world':f.world=0
+    elif case=='no-player':f.player=0
+    elif case=='null-vtable':native.put(f.u,native.INTERFACE,0)
+    elif case=='null-world-method':native.put(f.u,native.PARENT,0)
+    else:native.put(f.u,native.PARENT+4,0)
+    before=bytes(f.u.mem_read(f.controller(),0x54))
+    assert f.poll(owner,interface)==0 and not f.calls and f.mode()==0
+    assert bytes(f.u.mem_read(f.controller(),0x54))==before
 
 
-@pytest.mark.parametrize('state', [2, 3, 4, 5, 0xFFFFFFFF])
-def test_menu_and_other_non_gameplay_owner_states_do_not_open_again(state):
-    f = ChordMachine()
-    f.close_menu(state)
-    f.buttons(WAB)
-    assert f.poll() == (1 if state in (2, 3, 4) else 0)
-    assert f.calls == []
-    assert f.mode() == 1
+@pytest.mark.parametrize('state',[2,3,4,5,0xffffffff])
+def test_existing_menu_or_invalid_owner_does_not_open_a_new_window(state):
+    f=ChordMachine();f.close_menu(state);f.buttons(WAB)
+    assert f.poll()==(1 if state in(2,3,4)else 0) and not f.calls
 
 
-@pytest.mark.parametrize('state', [0, 1])
-def test_gameplay_or_freecam_with_empty_menu_vector_can_open(state):
-    f = ChordMachine()
-    f.close_menu(state)
-    f.buttons(WAB)
-    assert f.poll() == 1
-    assert len(f.calls) == 1
+@pytest.mark.parametrize('state',[0,1])
+def test_simultaneous_compatibility_in_normal_and_freecam_states(state):
+    f=ChordMachine();f.close_menu(state);f.buttons(WAB);assert f.poll()==1 and len(f.calls)==1
 
 
 def test_nonempty_menu_vector_prevents_duplicate_native_menu():
-    f = ChordMachine()
-    native.put(f.u, native.OWNER + 0x24, native.VECTOR + 4)
-    f.buttons(WAB)
-    assert f.poll() == 1  # Consumed without stacking another menu.
-    assert f.calls == []
+    f=ChordMachine();native.put(f.u,native.OWNER+0x24,native.VECTOR+4);f.buttons(WAB)
+    assert f.poll()==1 and not f.calls
 
 
-@pytest.mark.parametrize('held', [{'White'}, {'A'}, {'B'}, {'White', 'A'}, {'White', 'B'}, {'A', 'B'}, {'L3'}, {'Start'}])
-def test_single_buttons_and_incomplete_chords_remain_native(held):
-    f = ChordMachine()
-    f.close_menu(1)  # In particular, WHITE alone must still exit native Freecam.
-    f.buttons(held)
-    before = bytes(f.u.mem_read(f.controller(), 0x54))
-    assert f.poll() == 0
-    assert f.calls == []
-    assert bytes(f.u.mem_read(f.controller(), 0x54)) == before
+@pytest.mark.parametrize('held',[{'White'},{'A'},{'B'},{'White','A'},{'White','B'},{'A','B'},{'L3'},{'Start'}])
+def test_partial_sequence_does_not_skip_native_owner_or_rewrite_analog_input(held):
+    f=ChordMachine();f.close_menu(1);f.buttons(held);before=f.raw()
+    assert f.poll()==0 and not f.calls and f.raw()==before
 
 
-def test_original_l3_start_chord_consumes_only_its_native_edges():
-    f = ChordMachine()
-    f.buttons(LEGACY)
-    assert f.poll() == 1
-    assert f.mode() == 2
-    assert f.u.mem_read(f.controller() + 0x50, 1) == b'\x01'
-    assert f.u.mem_read(f.controller() + 0x52, 1) == b'\x01'
-    assert all(f.u.mem_read(f.controller() + LATCHES[name], 1) == b'\0' for name in WAB)
+def test_original_l3_start_consumes_only_its_native_edges():
+    f=ChordMachine();f.buttons(LEGACY);assert f.poll()==1 and f.mode()==4
+    assert f.u.mem_read(f.controller()+0x50,1)==b'\x01' and f.u.mem_read(f.controller()+0x52,1)==b'\x01'
+    assert all(f.u.mem_read(f.controller()+LATCHES[name],1)==b'\0' for name in WAB)
 
 
-@pytest.mark.parametrize('pressure', [0.00001, 0.1, 0.5, 1.0])
-def test_positive_normalized_analog_pressure_activates_without_rewriting_it(pressure):
-    f = ChordMachine()
-    for name in WAB:
-        f.u.mem_write(f.controller() + VALUES[name], struct.pack('<f', pressure))
-    before = f.raw()
-    assert f.poll() == 1
-    assert f.raw() == before
-    assert len(f.calls) == 1
+@pytest.mark.parametrize('pressure',[.00001,.1,.5,1.0])
+def test_positive_normalized_pressure_is_supported_without_rewriting(pressure):
+    f=ChordMachine()
+    for name in WAB:f.u.mem_write(f.controller()+VALUES[name],struct.pack('<f',pressure))
+    before=f.raw();assert f.poll()==1 and f.raw()==before
 
 
-def test_invalid_world_then_valid_world_does_not_open_from_an_old_held_chord():
-    f = ChordMachine()
-    f.world = 0
-    f.buttons(WAB)
-    assert f.poll() == 0
-    assert len(f.calls) == 0
-    f.world = WORLD
-    assert f.poll() == 1
-    assert len(f.calls) == 0
-    f.buttons(set())
-    assert f.poll() == 0
-    f.buttons(WAB)
-    assert f.poll() == 1
-    assert len(f.calls) == 1
+def test_loaded_world_does_not_reuse_a_gesture_started_while_no_world_exists():
+    f=ChordMachine();f.world=0;f.buttons(WAB);assert f.poll()==0
+    f.world=WORLD;assert f.poll()==0 and not f.calls
+    f.buttons(set());assert f.poll()==0
+    f.buttons(WAB);assert f.poll()==1 and len(f.calls)==1
 
 
-@pytest.mark.parametrize('activate', [False, True])
-def test_dispatch_wrapper_preserves_registers_flags_and_native_stack_contract(activate):
-    f = ChordMachine()
-    f.buttons(WAB if activate else {'White'})
-    native.put(f.u, native.STACK, native.EXIT)
-    native.put(f.u, native.STACK + 4, native.INTERFACE)
-    native.put(f.u, native.STACK + 8, 0x3C23D70A)
-    for reg, value in SAVED.items():
-        f.u.reg_write(reg, value)
-    f.u.reg_write(r.UC_X86_REG_EFLAGS, 0x246)
-    f.u.reg_write(r.UC_X86_REG_ESP, native.STACK)
-    target = native.EXIT if activate else 0x15DA7
-    native.run_until(f.u, DISPATCH, {WORLD_METHOD: f.get_world, 0x16610: f.action}, targets=(target,))
-    for reg, value in SAVED.items():
-        if not activate and reg == r.UC_X86_REG_EAX:
-            assert f.u.reg_read(reg) == 0
-        else:
-            assert f.u.reg_read(reg) == value
+@pytest.mark.parametrize('delta',[-.1,1.01,float('nan'),float('inf')])
+def test_invalid_or_expired_delta_cancels_without_fpu_error(delta):
+    f=ChordMachine();f.buttons({'White'});assert f.poll()==0
+    f.buttons({'A'});assert f.poll(delta=delta)==0
+    assert f.mode()==0 and not f.calls
+
+
+@pytest.mark.parametrize('activate',[False,True])
+def test_dispatch_preserves_registers_flags_and_original_two_argument_stack(activate):
+    f=ChordMachine();f.buttons(WAB if activate else {'White'})
+    native.put(f.u,native.STACK,native.EXIT);native.put(f.u,native.STACK+4,native.INTERFACE)
+    native.put(f.u,native.STACK+8,0x3c23d70a)
+    for reg,value in SAVED.items():f.u.reg_write(reg,value)
+    f.u.reg_write(r.UC_X86_REG_EFLAGS,0x246);f.u.reg_write(r.UC_X86_REG_ESP,native.STACK)
+    target=native.EXIT if activate else 0x15da7
+    native.run_until(f.u,DISPATCH,{WORLD_METHOD:f.get_world,PLAYER_METHOD:f.get_player,0x16610:f.action},targets=(target,))
+    for reg,value in SAVED.items():
+        assert f.u.reg_read(reg)==(0 if not activate and reg==r.UC_X86_REG_EAX else value)
     if activate:
-        assert f.u.reg_read(r.UC_X86_REG_ESP) == native.STACK + 12
-        assert f.u.reg_read(r.UC_X86_REG_EFLAGS) == 0x246
-        assert len(f.calls) == 1
+        assert f.u.reg_read(r.UC_X86_REG_ESP)==native.STACK+12
+        assert f.u.reg_read(r.UC_X86_REG_EFLAGS)==0x246
+        assert len(f.calls)==1
     else:
-        assert f.u.reg_read(r.UC_X86_REG_ESP) == native.STACK - 4
-        assert native.get(f.u, native.STACK - 4) == SAVED[r.UC_X86_REG_ECX]
-        assert f.u.reg_read(r.UC_X86_REG_EFLAGS) & 0x8D5 == 0x95  # CMP 0,4.
-        assert f.calls == []
+        assert f.u.reg_read(r.UC_X86_REG_ESP)==native.STACK-4
+        assert native.get(f.u,native.STACK-4)==SAVED[r.UC_X86_REG_ECX]
+        assert f.u.reg_read(r.UC_X86_REG_EFLAGS)&0x8d5==0x95
+        assert not f.calls

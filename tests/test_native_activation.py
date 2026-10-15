@@ -3,7 +3,7 @@
 Optional local EU executable. Retail input dispatch, action 0, root/menu-row
 constructors, vector insertion and menu update execute as native instructions.
 Heap allocation and the optional level-title accessor are engine boundaries;
-the tiny fixture world-interface getter reads its own stored world pointer.
+the actual Scene getters return the current World and player Entity.
 No game assets are bundled and this is not an Xemu gameplay assertion.
 """
 import os
@@ -34,11 +34,13 @@ def activation_image():
     return laboratory.patch_xbe(Path(path).read_bytes(), CATALOG)
 
 
-@pytest.mark.parametrize('chord,buttons,latches', [
-    ('white-a-b', (0x2C, 0x18, 0x1C), (0x4D, 0x48, 0x49)),
-    ('l3-start', (0x40, 0x38), (0x52, 0x50)),
+@pytest.mark.parametrize('initial_state,chord,buttons,latches', [
+    (0,'white-a-b',(0x2C,0x18,0x1C),(0x4D,0x48,0x49)),
+    (1,'white-a-b',(0x2C,0x18,0x1C),(0x4D,0x48,0x49)),
+    (0,'l3-start',(0x40,0x38),(0x52,0x50)),
+    (1,'l3-start',(0x40,0x38),(0x52,0x50)),
+    (0,'timed-white-a-b',(0x2C,0x18,0x1C),(0x4D,0x48,0x49)),
 ])
-@pytest.mark.parametrize('initial_state', [0, 1])
 def test_common_native_scheduler_opens_complete_menu_once_per_press(
         activation_image, monkeypatch, chord, buttons, latches, initial_state):
     image, metadata = activation_image
@@ -82,13 +84,11 @@ def test_common_native_scheduler_opens_complete_menu_once_per_press(
 
     handlers = {0xE67CD: heap, 0xE4C9F: allocate,
                 0x185E0: vector, 0x8D960: level_name}
-    native.put(u, native.INTERFACE, interface_vtable)
-    native.put(u, native.INTERFACE + 4, world)
-    native.put(u, native.INTERFACE + 0x40, native.OWNER)
-    native.put(u, interface_vtable, native.CODE)
-    # Fixture interface virtual 0, with real x86 dereference and RET. The
-    # hotkey implementation must call it using the native ECX contract.
-    u.mem_write(native.CODE, bytes.fromhex('8B4104C3'))
+    # Real Scene vtable/getters: 513A0 reads +2C; 513B0 reads +30.
+    native.put(u,native.INTERFACE,0x1A0E58)
+    native.put(u,native.INTERFACE+0x2C,world)
+    native.put(u,native.INTERFACE+0x30,actor)
+    native.put(u,native.INTERFACE+0x40,native.OWNER)
     native.put(u, world + 0xCC, actor)
     native.put(u, native.OWNER + 0x1C, initial_state)
     native.put(u, native.OWNER + 0x20, native.VECTOR)
@@ -116,16 +116,16 @@ def test_common_native_scheduler_opens_complete_menu_once_per_press(
     u.hook_add(UC_HOOK_CODE, trace)
 
     def frame(pressed):
+        held=set(buttons) if pressed is True else (set() if pressed is False else set(pressed))
         u.mem_write(native.CONTROLLER, b'\0' * 0x48)
         # The native input manager keeps consumed edges while a button is
         # held, then clears them on release. Do not fabricate fresh edges.
-        if not pressed:
-            for field in latches:
-                u.mem_write(native.CONTROLLER + field, b'\0')
+        for button,latch in zip(buttons,latches):
+            if button not in held:u.mem_write(native.CONTROLLER+latch,b'\0')
         # Nonzero unrelated analog axes must survive the complete opening.
         u.mem_write(native.CONTROLLER, struct.pack('<2f', 0.125, -0.25))
-        if pressed:
-            for field in buttons:
+        if held:
+            for field in held:
                 native.put(u, native.CONTROLLER + field, 0x3F800000)
         pressure = bytes(u.mem_read(native.CONTROLLER, 0x48))
         native.put(u, stack, native.EXIT)
@@ -140,7 +140,12 @@ def test_common_native_scheduler_opens_complete_menu_once_per_press(
         assert all(u.reg_read(reg) == value for reg, value in preserved.items())
         assert bytes(u.mem_read(native.CONTROLLER, 0x48)) == pressure
 
-    frame(True)
+    if chord=='timed-white-a-b':
+        for held in [{0x2C},set(),{0x18},set()]:
+            frame(held)
+            assert not entered and not allocations
+        frame({0x1C})
+    else:frame(True)
     assert entered == [0x16610, 0x138D0]
     assert native.get(u, native.OWNER + 0x1C) == 2
     assert native.get(u, native.OWNER + 0x24) == native.VECTOR + 4

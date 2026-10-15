@@ -1,20 +1,29 @@
-# Native Debug Laboratory — 1.1.0-dev.2
+# Native Debug Laboratory — 1.1.0-dev.3
 
 This preview extends the existing in-game menu. Its title and all added menu
 labels are **English**, independently of the game's playback language.
 
 ## Open the menu
 
-During loaded gameplay, press **WHITE + A + B together**, then release all
-three buttons before navigating. No cheat sequence is required. **L3 + START**
-is also available. The shortcut works during normal gameplay and Freecam.
+During loaded gameplay, press **WHITE, then A, then B within one second**.
+You may release each button before pressing the next. Holding the earlier
+buttons also works, including all three in one frame. The one-second window
+starts at WHITE, rather than restarting at every following key. A missed or
+expired sequence requires a fresh WHITE press. **L3 + START** remains available.
 
-Holding the shortcut opens only one menu. All buttons of that shortcut must
-be released before it can open another. It does not stack a second window
-while a menu is already open, and it is ignored without a live player during
-level loading. Original analog input values are preserved; only the native
-consumed-edge flags are changed. **WHITE alone still exits Freecam**, and
-**Y** retains its Freecam HUD toggle. Use the native menu navigation controls.
+The menu opens once per gesture. Release the remaining gesture buttons before
+opening it again. It does not stack windows over an already open menu. The
+actual Scene world and player getters prevent queuing an opening before a
+player has spawned. Analog input values are preserved; only recognised button
+edges are consumed.
+
+The retail **enable cheat buttons** setting now retains its disabled default.
+It is not required for the menu: enabling it had incorrectly assigned WHITE
+to additional player jump/boost actions. Normal movement and the game's usual
+jump/action buttons retain their original behaviour. **WHITE alone still exits
+Freecam**; when starting the sequence from Freecam, a separate WHITE press can
+therefore return to normal play before A and B open the menu. **Y** retains its
+Freecam HUD toggle. Use the native menu navigation controls.
 
 ## Menu contents
 
@@ -61,8 +70,10 @@ Windows patcher and its default 1.0.0 mode remain unchanged. No game files or
 private trial ISO are distributed in this repository.
 
 Native tests execute the real scheduled input caller, the owner dispatcher,
-the retail menu action and the complete root constructor. They cover both
-shortcuts from normal play and Freecam, held/released inputs, controller
-selection, loading guards, the original Game state rows, all 20 key pickups,
+the retail menu action and the complete root constructor. They cover the timed gesture, released/overlapping steps, timeouts, the alternative
+shortcut, normal play and Freecam, controller selection, loading guards, the original Game state rows, all 20 key pickups,
 duplicate/full-inventory handling, popup/audio arguments and deferred actions.
-These are isolated CPU tests, not a complete Xemu gameplay certification.
+They also execute the native CVar constructor, actual Xbox XInput button
+normalisation and player action packing, with a negative control reproducing
+the former WHITE jump/boost. These are isolated CPU tests, not a complete Xemu
+gameplay certification.

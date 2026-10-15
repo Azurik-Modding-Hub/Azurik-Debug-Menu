@@ -11,7 +11,7 @@ import struct
 from .patch import Code, dword, jump, patch_xbe as freecam_patch
 from .xbe import allocate,offset,sections
 
-VERSION='1.1.0-dev.2'
+VERSION='1.1.0-dev.3'
 GROUP,POPUP,VOICE,STOP,GRANT_KEY=0,1,2,4,5
 
 # Names and inventory IDs verified against the EU critters_item_data table.
@@ -168,7 +168,9 @@ def patch_xbe(source,catalog):
     from .activation import ENTRY,STOLEN,emit_poll,emit_dispatch
     if source[offset(source,ENTRY):offset(source,ENTRY)+len(STOLEN)]!=STOLEN:
         raise ValueError('Unexpected live cheat-owner dispatcher.')
-    hotkey_state=store(b'\0'*4)
+    # This CVar enables WHITE jump/boost, not the debug menu. Keep retail 0.
+    out[0xE6717]=source[0xE6717]
+    hotkey_state=store(b'\0'*64)
     hotkey_poll=add('hotkeyPoll',lambda p:emit_poll(p,hotkey_state))
     hotkey_dispatch=add('hotkeyDispatch',lambda p:emit_dispatch(p,hotkey_poll))
     vtable=store(b'\0'*20);row_stub=store(b'\0'*256)
@@ -215,7 +217,7 @@ def patch_xbe(source,catalog):
         at=offset(out,address);out[at:at+len(body)]=body
     title=store(('Debug Menu - '+VERSION).encode('ascii')+b'\0',1)
     at=offset(out,0x1395F);out[at:at+5]=b'\xB8'+dword(title)
-    ranges=[(offset(base,address),len(body))for address,body in edits]+[(offset(base,0x1395F),5),(offset(base,0x1A3C24),4)]
+    ranges=[(offset(base,address),len(body))for address,body in edits]+[(offset(base,0x1395F),5),(offset(base,0x1A3C24),4),(0xE6717,1)]
     for section in sections(base)[1]:
         start=section['raw'];end=start+section['raw_size'];expected=bytearray(base[start:end])
         for pos,length in ranges:
@@ -223,8 +225,9 @@ def patch_xbe(source,catalog):
         if expected!=out[start:end]:raise ValueError('Unexpected change outside native laboratory hooks.')
     return bytes(out),dict(version=VERSION,sourceSha256=hashlib.sha256(source).hexdigest(),outputSha256=hashlib.sha256(out).hexdigest(),
         stateVA=state,routines=routines,sectionVA=va,sectionRaw=raw,sectionUsedBytes=used,catalog=catalog,
-        hotkeyStateVA=hotkey_state,activation=dict(primary='WHITE + A + B',alternative='L3 + START',releaseAllToRearm=True,
+        hotkeyStateVA=hotkey_state,activation=dict(primary='WHITE, then A, then B within 1 second',alternative='L3 + START',releaseAllToRearm=True,
+            sequenceWindowSeconds=1.0,buttonReleaseBetweenStepsAllowed=True,controllerStateBytes=16,
             liveDispatcherVA=ENTRY,normalAndFreecam=True,menuLanguage='English'),
-        nativeGameTested=False,animationPreview=False,frameCallerReturn=0x6649C,freecam=freecam,
+        nativeGameTested=False,animationPreview=False,playerCheatButtonsEnabled=False,frameCallerReturn=0x6649C,freecam=freecam,
         keys=keys,keyInventoryCapacity=5,keyAction='native pickup; owned keys unchanged; full inventory refused',
         hooks=[dict(offset=pos,bytes=length)for pos,length in ranges],otherBaselineSectionBytesPreserved=True)

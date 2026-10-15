@@ -80,10 +80,11 @@ la modification dans une nouvelle ISO; le menu s'utilise ensuite dans Azurik.
 [Documentation anglaise et installation depuis Python](README.md)
 · [Azurik Level Editor](https://github.com/Azurik-Modding-Hub/Azurik-Level-Editor)
 
-## Aperçu de développement 1.1.0-dev.2
+## Aperçu de développement 1.1.0-dev.3
 
-Appuyer ensemble sur **BLANC + A + B** ouvre directement le menu en partie,
-puis relâcher les trois boutons pour naviguer. **L3 + START** reste disponible.
+Appuyer sur **BLANC, puis A, puis B en moins d’une seconde** ouvre le menu.
+Les boutons peuvent être relâchés entre les appuis. Blanc ne déclenche plus
+les commandes supplémentaires de saut ou de poussée du personnage. **L3 + START** reste disponible.
 Le menu est en anglais : **Text boxes**, **Oracles** et **Game state → Keys**.
 Les panneaux de sceaux et les messages de fragments/sceaux sont classés dans
 Text boxes ; les aperçus de voix sans panneau confirmé portent **voice only**.
