@@ -1,86 +1,103 @@
-# Native Debug Laboratory — 1.1.0-dev.4
+# Native Debug Laboratory — 1.1.0
 
-This preview extends the existing in-game menu. Its title and all added menu
+Version 1.1.0 installs the complete native Debug Menu from the Windows patcher or
+its command-line entry point. The title **Debug Menu - 1.1.0** and the added menu
 labels are **English**, independently of the game's playback language.
 
-## Open the menu
+## Open, close and reopen
 
 During loaded gameplay, press **WHITE, then A, then B within one second**.
-You may release each button before pressing the next. Holding the earlier
-buttons also works, including all three in one frame. The one-second window
-starts at WHITE, rather than restarting at every following key. A missed or
-expired sequence requires a fresh WHITE press. **L3 + START** remains available.
+You may release each button before pressing the next. Holding earlier buttons
+also works, including all three in one frame. The one-second window starts at
+WHITE; it does not restart at each following button. An expired or incomplete
+sequence requires a fresh WHITE press. **L3 + START** remains an alternative.
 
-The menu opens once per gesture. Release the remaining gesture buttons before
-opening it again. After a normal close, repeat **WHITE → A → B within one
-second** to reopen it; the original cheat sequence is not required. Normal
-closure retains the native menu object, and the shortcut now asks the game's
-open action to reuse it. It does not stack windows over an already open menu. The
-actual Scene world and player getters prevent queuing an opening before a
-player has spawned. Analog input values are preserved; only recognised button
-edges are consumed.
+Release the gesture buttons before beginning another sequence. After closing the
+menu normally, repeat **WHITE → A → B** to reopen it without the original cheat
+code. Normal closure retains the native menu object, which the game's open action
+reuses. The shortcut does not stack windows over an already open menu. It checks
+the actual current world and player, so it cannot queue a menu before the player
+has spawned. Analog inputs are preserved; recognized button edges are consumed.
 
-The retail **enable cheat buttons** setting now retains its disabled default.
-It is not required for the menu: enabling it had incorrectly assigned WHITE
-to additional player jump/boost actions. Normal movement and the game's usual
-jump/action buttons retain their original behaviour. **WHITE alone still exits
-Freecam**; when starting the sequence from Freecam, a separate WHITE press can
-therefore return to normal play before A and B open the menu. **Y** retains its
-Freecam HUD toggle. Use the native menu navigation controls.
+The retail **enable cheat buttons** setting retains its disabled default. It is
+not needed for these menu shortcuts and would assign additional jump/boost actions
+to WHITE. Normal player action buttons keep their original behaviour. **WHITE
+alone still exits Freecam**; starting the sequence there can first return to normal
+play before A and B open the menu. **Y** retains its Freecam HUD toggle.
 
-## Menu contents
+## Six root entries
 
-- **Change level...**, **Play Movie...**, **Game state...** and **Freecam**.
-- **Text boxes**: 67 original popup sequences, including their voices where
-  available. **Seals** contains the six original seal panels. **Fragment and
-  seal messages** also contains nine additional spoken hints, marked
-  **(voice only)**: no matching panel is claimed for those voice previews.
-- **Oracles**: realm introductions and other spoken hints. Fragment/seal
-  messages are grouped under Text boxes rather than duplicated here.
-- **Stop voice** stops an audio preview.
+| Entry | Contents |
+| --- | --- |
+| **Change level...** | Original native level selection |
+| **Play Movie...** | Original native movie selection |
+| **Game state...** | Original state tools, plus **Keys (5 inventory slots)** |
+| **Freecam** | Original detached camera, live world and blocked player commands |
+| **Text boxes** | 67 original popup sequences and fragment/seal message previews |
+| **Oracles** | Realm introductions and other spoken hints |
 
-There is no Animations category or manual animation playback action. The
-retail actor animation code is preserved. Normal game animations and Azurik's
-idle movement in Freecam continue through the existing blocked-input path.
+**Seals** under Text boxes contains the six original seal panels. **Fragment and
+seal messages** also contains nine additional recordings, marked **(voice only)**
+where a matching panel has not been identified. These messages are not duplicated
+under Oracles. **Stop voice** ends an audio preview.
+
+There is no Animations category or manual animation playback. Retail actor
+animation code is preserved. Normal game animations and Azurik's idle movement
+in Freecam continue through the existing blocked-input path. Voice previews do
+not recreate an oracle's appearance, lip movements or effects.
 
 **Game state → Keys (5 inventory slots)** contains all 20 verified key types,
-grouped by realm. **Give: ...** grants one key using the original inventory
-pickup routine. Already-held keys stay unchanged. The original five-slot
-limit is retained: a full inventory shows its original capacity message and
-no held key is replaced. Keys change the live inventory and can be saved by
-the game. They do not restore realms, grant powers or complete other quests.
+grouped by realm. **Give: ...** uses the original inventory pickup routine.
+Already-held keys stay unchanged. The five-slot limit is preserved: a full
+inventory shows the original capacity message and no held key is replaced.
+Granted keys change the live inventory and may be saved by the game. They do not
+restore realms, grant powers or complete other quests.
 
-Popup and voice actions wait until the debug menu closes, then run on a normal
-scheduled frame with the same live world and player. They do not set quest
-flags. The game's language controls localized playback; original demo popup
-voices exist only in English. Additional fragment/seal oracle recordings are
-distinct from the seal popup sounds; their thematic grouping does not invent
-a new panel/audio pairing.
+Popup and voice actions wait until the menu closes, then run on a normal
+scheduled frame with the same live world and player. They do not set quest flags.
+The game's language controls localized playback; original demo popup voices exist
+only in English. Additional fragment/seal recordings are distinct from the seal
+popup sounds; the thematic grouping does not invent a panel/audio pairing.
 
-The public executable-only patch keeps the original E6 `e6mirrors` image name
-and its existing mismatch with the singular voice name. The separate combined
-trial also corrects and registers that panel/voice alias in the language banks.
+The executable-only patch keeps the original E6 `e6mirrors` image name and its
+mismatch with the singular voice name. A separate private trial that also changes
+language banks is not included in this release.
 
-## Build a separate test ISO
+## Install into a new ISO
+
+The Windows patcher installs all 1.1.0 menu features by default. It can also run
+from source:
 
 ```powershell
-python laboratory_patcher.py --input "Your Azurik EU.iso" --output "Azurik Debug Laboratory.iso"
+python patcher.py --input "Your Azurik EU.iso" --output "Azurik Debug Menu 1.1.0.iso"
 ```
 
-The input must contain the pristine supported EU executable, including when
-it contains edited level files. Existing output files are refused. The stable
-Windows patcher and its default 1.0.0 mode remain unchanged. No game files or
-private trial ISO are distributed in this repository.
+The dedicated ISO entry point remains available:
 
-The reopening correction follows the native menu's close and open paths. Its
-complete behaviour in Xemu still needs verification, including repeated normal
-closes and shortcut openings during gameplay.
+```powershell
+python laboratory_patcher.py --input "Your Azurik EU.iso" --output "Azurik Debug Menu 1.1.0.iso"
+```
 
-Native tests execute the real scheduled input caller, the owner dispatcher,
-the retail menu action and the complete root constructor. They cover the timed gesture, released/overlapping steps, timeouts, the alternative
-shortcut, normal play and Freecam, controller selection, loading guards, the original Game state rows, all 20 key pickups,
-duplicate/full-inventory handling, popup/audio arguments and deferred actions.
-They also execute the native CVar constructor, actual Xbox XInput button
-normalisation and player action packing, with a negative control reproducing
-the former WHITE jump/boost. These are isolated CPU tests, not a complete Xemu
-gameplay certification.
+The input must contain the pristine supported EU executable, including when it
+contains edited level files. Existing outputs are refused and the input is
+preserved. No game files, private recordings or private trial ISO are distributed.
+Cold-boot the new ISO in Xemu; an old snapshot can retain the old executable.
+
+## Validation boundaries
+
+Release validation recorded 247 passing automated tests, including the public
+desktop/CLI default patch. The compiled Windows application produced the expected
+1.1.0 executable and a fully verified ISO, preserving its source image.
+Native tests execute the scheduled input caller, owner dispatcher,
+menu action, complete root constructor and ordinary-close callback. They cover
+the timed gesture, released/overlapping presses, timeouts, alternative shortcut,
+opening and reopening, normal play, Freecam, controller selection, loading guards,
+original Game state rows, all key pickups, duplicate/full-inventory handling,
+popup/audio arguments and deferred actions. They also execute native CVar
+construction, Xbox XInput normalization and player action packing, with a negative
+control reproducing the former WHITE jump/boost.
+
+These isolated CPU tests and ISO readback checks do not certify full Xemu
+gameplay. Repeated closes and shortcut openings, visual presentation, voices,
+text boxes, realm transitions, HUD, idle animation and control restoration still
+require an in-game test.

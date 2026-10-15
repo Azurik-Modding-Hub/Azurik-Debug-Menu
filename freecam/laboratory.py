@@ -11,7 +11,7 @@ import struct
 from .patch import Code, dword, jump, patch_xbe as freecam_patch
 from .xbe import allocate,offset,sections
 
-VERSION='1.1.0-dev.4'
+VERSION='1.1.0'
 GROUP,POPUP,VOICE,STOP,GRANT_KEY=0,1,2,4,5
 
 # Names and inventory IDs verified against the EU critters_item_data table.

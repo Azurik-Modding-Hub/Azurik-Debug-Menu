@@ -5,12 +5,24 @@ import json
 import os
 import shutil
 import struct
-from .patch import patch_xbe
+from .laboratory import patch_xbe as patch_laboratory_xbe
 
 SECTOR = 2048
 MAGIC = b'MICROSOFT*XBOX*MEDIA'
 PARTITIONS = (0, 0xFD90000, 0x2080000)
 CHUNK = 4 * 1024 * 1024
+
+
+def patch_xbe(source):
+    """Apply the released native debug menu using its bundled names-only tree.
+
+    Keep the low-level 1.0 Freecam patch in ``freecam.patch`` available for
+    independent native audits. All public file builders install this release.
+    ``__file__`` also resolves inside the PyInstaller bundle.
+    """
+    catalogue_path = Path(__file__).with_name('laboratory-catalogue.json')
+    catalogue = json.loads(catalogue_path.read_text(encoding='utf-8'))
+    return patch_laboratory_xbe(source, catalogue)
 
 
 def index_image(path):
@@ -176,12 +188,12 @@ def build_iso(source, destination, progress=None, *, executable_patcher=None):
             destination.unlink()  # Only the exclusively created single output file.
 
 
-def build_xbe(source, destination):
+def build_xbe(source, destination, *, executable_patcher=None):
     source, destination = Path(source).resolve(), Path(destination).resolve()
     report_path = destination.with_suffix(destination.suffix + '.report.json')
     if source == destination or destination.exists() or report_path.exists():
         raise ValueError('Choose a new output file')
-    body, report = patch_xbe(source.read_bytes())
+    body, report = (executable_patcher or patch_xbe)(source.read_bytes())
     with destination.open('xb') as stream:
         stream.write(body)
     with report_path.open('x', encoding='utf-8') as stream:

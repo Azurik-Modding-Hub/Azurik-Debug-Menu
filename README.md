@@ -1,160 +1,162 @@
 # Azurik Debug Menu
 
-A standalone **PAL / European Xbox test patch** for *Azurik: Rise of Perathia*.
-It extends the **existing in-game debug menu** with **Freecam** and invokes the native
-camera used by the original cheat. The world continues updating while Azurik's
-controls are disabled. His idle animation, physics and update scheduling continue.
-Press **WHITE** to return to normal player controls;
-press **Y** to hide or show the HUD.
+**Version 1.1.0** extends the existing Xbox debug menu in *Azurik: Rise of Perathia*
+with Freecam, text-box and oracle voice previews, and key grants. During loaded
+gameplay, press **WHITE → A → B within one second** to open it. Close it normally,
+release the buttons, and use the same sequence to reopen it without the original
+cheat code.
 
-The patch uses shared game code and the currently loaded gameplay camera. It
-applies across **all playable kingdoms** in the supported European build, with
-no W1 restriction. Individual kingdoms still need in-game verification. Activate
-freecam during loaded gameplay, rather than on the title or loading screens.
+The in-game menu is **English** and displays **Debug Menu - 1.1.0**. The Windows
+patcher installs it into a new copy of your own supported **PAL / European ISO**.
+No game executable, ISO, save, model, texture or recording is distributed here.
 
-**Version: 1.0.0.** Isolated x86 tests and ISO readback verification
-are provided. A complete in-game test is still required, including collisions,
-menu transitions and HUD behaviour. No game executable, ISO, save, model or texture
-is distributed in this repository or its downloads.
-
-[Guide français](README.fr.md) · [Technical notes](docs/IMPLEMENTATION.md)
+[Download 1.1.0](https://github.com/Azurik-Modding-Hub/Azurik-Debug-Menu/releases/tag/v1.1.0)
+· [Guide français](README.fr.md) · [Detailed guide](docs/LABORATORY.md)
+· [Technical notes](docs/IMPLEMENTATION.md)
 · [Azurik Level Editor](https://github.com/Azurik-Modding-Hub/Azurik-Level-Editor)
 
-![Windows ISO patcher 1.0.0 — actual desktop interface](docs/screenshots/patcher-1.0.0.png)
+![Azurik Debug Menu 1.1.0 — actual Windows patcher interface](docs/screenshots/patcher-1.1.0.png)
 
-Desktop patcher interface captured in version 1.0.0. In-game validation remains pending.
+Actual desktop patcher interface from version 1.1.0. This capture does not show an
+in-game test.
 
-![Native menu and Freecam controls — explanatory diagram](docs/screenshots/freecam-controls-1.0.0.svg)
+![Azurik Debug Menu 1.1.0 — explanatory menu diagram](docs/screenshots/native-menu-1.1.0.png)
 
-This diagram explains the menu structure and controls; it does not depict an in-game test.
+Explanatory diagram of the menu structure, not a screenshot from the game.
 
-Version **1.0.0** fixes Azurik remaining frozen after leaving Freecam. The earlier
-patch skipped his whole update, including its re-registration for future frames.
-Freecam now uses the game's native blocked-input path: player buttons and movement
-axes are neutralized, while animation and normal frame maintenance continue.
-The native camera-enabled flag restores controls on exit even if a camera pointer
-briefly remains in the stack. Confirm idle animation and exit behavior in Xemu.
+## Features
 
-## Development preview: native Debug Laboratory
+The root menu has **six entries**: **Change level...**, **Play Movie...**,
+**Game state...**, **Freecam**, **Text boxes** and **Oracles**.
 
-The `feature/native-debug-laboratory` branch adds **WHITE, then A, then B within one second** to open the native menu
-directly during loaded gameplay. Buttons may be released between steps. **L3 + START** remains available.
-After closing the menu normally, release the gesture buttons and repeat
-**WHITE → A → B** to reopen it without entering the original cheat code.
-The shortcut reuses the native retained menu rather than stacking another window.
-The menu is in English, with **Text boxes**, **Oracles**, and **Game state → Keys**
-for all 20 supported key types. Fragment/seal messages are under Text boxes;
-additional spoken-only hints are labelled explicitly. There is no Animations
-category. Key grants respect the five inventory slots and do not replace held
-keys. This is **1.1.0-dev.4**, separate from the stable 1.0.0 Windows patcher.
-[Preview workflow, shortcuts and testing limits](docs/LABORATORY.md).
+- **Freecam** uses the original game's detached camera. Player movement, attack
+  and jump commands are disabled while idle animation, physics and world updates
+  continue. **WHITE** or **BACK** exits; **Y** hides or shows the HUD.
+- **Text boxes** previews 67 original popup sequences with their voices where
+  available. Seal panels and fragment/seal messages are grouped here. Additional
+  recordings without an identified panel are explicitly marked **(voice only)**.
+- **Oracles** previews realm introductions and other spoken hints. Fragment/seal
+  messages are under Text boxes rather than duplicated here. **Stop voice** ends
+  a voice preview.
+- **Game state → Keys (5 inventory slots)** provides all 20 verified key types,
+  grouped by realm. **Give: ...** uses the game's inventory pickup routine. A key
+  already held is not duplicated, and a full inventory does not replace any key.
+
+There is no **Animations** category or manual animation playback. Normal game
+animations and Azurik's idle movement remain active. The shared Freecam code
+applies across all playable kingdoms in the supported build; each kingdom still
+needs full in-game verification.
 
 ## Controls
 
 | Action | Xbox controller |
 | --- | --- |
-| Open the native debug menu | **L3 + START** |
-| Activate the original freecam | Select **Freecam**, then confirm with **START** |
-| Camera movement and orientation | Original native camera controls |
-| Hide / show the HUD | **Y**, while freecam is active |
-| Exit freecam | **WHITE**; native **BACK** is also preserved |
-| Original cheat activation | **RT, D-pad Down, Up, Down, Up, R3, L3** |
+| Open or reopen the debug menu | **WHITE, then A, then B within one second** |
+| Alternative menu shortcut | **L3 + START** |
+| Select or activate a menu item | Native menu controls; confirm with **START** |
+| Activate Freecam | Select **Freecam**, then **START** |
+| Move and aim the camera | Original native camera controls |
+| Hide / show the HUD in Freecam | **Y** |
+| Exit Freecam | **WHITE** or **BACK** |
 
-For the original sequence, release each button before the next; do not keep RT
-held throughout it. WHITE is an exit button. No WHITE + R3 activation is added.
-The HUD returns to its previous visibility when exiting with WHITE or BACK.
+The one-second window starts at WHITE. Buttons may be released between steps;
+overlapping presses also work. Release the gesture buttons before beginning a
+new sequence. An incomplete or expired sequence needs a fresh WHITE press.
+The shortcut reuses a normally closed native menu and does not stack another
+window over an already open menu. The original cheat code remains available.
 
-**Freecam is the fourth entry in the game's existing root debug menu**, alongside
-the European build's original **Change level...**, **Play Movie...** and
-**Game state...** entries. It is available as soon as that native menu opens;
-there is no extra submenu to open. The three existing entries are preserved.
-The Windows patcher installs this change into your new ISO; it is not the debug
-menu itself.
+WHITE alone still exits Freecam. The shortcut does not enable the retail
+additional cheat-button actions that previously gave WHITE a jump/boost action.
+After leaving Freecam, the HUD returns to its previous visibility.
 
-The native debug-menu header displays **Commande menue - 1.0.0**, replacing
-the old Azurik build label. **L3 + START** opens this menu during gameplay;
-choose **Freecam** and confirm with **START**.
+## Install on Windows
 
-## Windows
+1. Download and extract the Windows package from the
+   [1.1.0 release](https://github.com/Azurik-Modding-Hub/Azurik-Debug-Menu/releases/tag/v1.1.0).
+2. Open **Azurik Freecam Patcher.exe** and choose your own supported Xbox ISO/XISO.
+3. Choose a **new output ISO**. The tool copies the image, patches its executable
+   and verifies the complete result. It refuses existing output files.
+4. Load the new ISO in Xemu and perform a full console restart. An old emulator
+   snapshot can retain the previous executable in memory.
+5. During loaded gameplay, press **WHITE → A → B within one second**.
 
-Download the **Windows patcher** from [1.0.0 release](https://github.com/Azurik-Modding-Hub/Azurik-Debug-Menu/releases/tag/v1.0.0).
-Open `Azurik Freecam Patcher.exe`, choose your own Azurik Xbox ISO/XISO, and choose
-a **new** output file. The patcher copies the image, installs the new executable
-in that copy, and verifies the complete game data. It never replaces an existing
-output or changes the input image.
-
-Boot the new image in Xemu with a full console restart. An old emulator snapshot
-can keep the previous executable in memory. Your original image remains the
-rollback copy. To remove the patch, boot that original image again.
-
-Check that the root debug menu has **four** entries, including **Freecam**.
-If it still has only the three original entries, verify the selected ISO and
-cold-boot that new image before testing the camera.
+Check the title **Debug Menu - 1.1.0** and the six root entries. An older title or
+only three/four entries indicates that an earlier build is still being loaded.
+The patcher never changes the input image. To return to the original game, boot
+your original image again.
 
 EDIT : You need to clear the cache for the changes you make to take effect ! Don’t worry, this won’t affect your save files in any way!
 
-Only clear Xbox cache partitions X/Y/Z. Keep partition E and the virtual disk
-containing your saves. The patcher itself never clears cache or changes saves.
+Only clear Xbox cache partitions **X/Y/Z**. Keep partition **E** and the virtual
+disk containing your saves. The patcher itself does not clear caches or alter
+saves, EEPROMs or emulator settings.
+
+## Compatibility and limits
+
+Only the pristine supported PAL/EU executable is accepted. Its SHA-256 is
+`72e0cf6af079a4024886d9e94812d87d4a35c177135b6196d215abe138866eab`.
+Other regions, truncated files and previously patched executables are refused.
+Edited levels are supported if their ISO still contains this original executable:
+all level assets stay byte-for-byte identical to the input image.
+
+Text-box and voice previews run after closing the menu, during a normal scheduled
+frame in the same live world. They do not change quest flags. Key grants change
+the inventory and can be retained by the game's normal save system. Previewing a
+voice does not create an oracle appearance or a new matching text panel.
+Localized playback follows the game's language; the original demo popup voices
+exist only in English. The original E6 mirror panel/voice name mismatch is not
+changed by this executable-only patch.
+
+Camera-only travel does not trigger portals that depend on the player's position.
+Gravity, moving platforms and scripted actions continue using the game's normal
+simulation. Activate the menu during loaded gameplay, outside title/loading screens.
 
 ## From source
 
-Python **3.10 or newer** is sufficient to run the patcher; no runtime packages
-are required. Windows Python includes the desktop interface through Tkinter.
+Python **3.10 or newer** runs the patcher without additional runtime packages.
+Windows Python provides the desktop interface through Tkinter.
 
 ```powershell
 python patcher.py
-python patcher.py --input "Azurik.iso" --output "Azurik-Freecam-Debug.iso"
-python patcher.py --input "default.xbe" --output "default-freecam.xbe"
+python patcher.py --input "Azurik.iso" --output "Azurik-Debug-Menu-1.1.0.iso"
 ```
 
-Only the pristine PAL/EU executable is supported. Its SHA-256 is
-`72e0cf6af079a4024886d9e94812d87d4a35c177135b6196d215abe138866eab`.
-Other regions, previously patched executables, and truncated inputs are refused.
-An ISO with edited levels is supported if its executable is still this original
-build: **all level files remain byte-for-byte identical** to the input ISO.
+The dedicated ISO command-line entry point is also available:
 
-## Testing and building
+```powershell
+python laboratory_patcher.py --input "Azurik.iso" --output "Azurik-Debug-Menu-1.1.0.iso"
+```
+
+## Validation and building
+
+**247 automated tests passed**, including the default desktop/CLI release path.
+The compiled Windows application produced the expected 1.1.0 executable and a
+fully verified ISO while preserving the original image. These
+isolated native x86 tests and ISO readback checks are not a complete Xemu gameplay
+test. Repeated menu opening/closing, idle animation, control restoration, realm
+transitions, HUD and the previews still require in-game confirmation.
 
 ```powershell
 python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-Optional local retail validation (the game file is not uploaded or committed):
+Optional local retail validation; the game file is not uploaded or committed:
 
 ```powershell
 $env:AZURIK_XBE = "C:\YourOwnDump\default.xbe"
 python -m pytest -q
 ```
 
-To build the desktop patcher:
+Build the Windows patcher:
 
 ```powershell
 python -m pip install pyinstaller
 powershell -File ".\Build Windows.ps1"
 ```
 
-## Scope
-
-- The native debug menu's existing tools remain available.
-- Simulation, other actors and effects continue during freecam.
-- Azurik's movement, attack and jump commands are disabled during Freecam.
-  Animation, idle motion, physics and frame scheduling continue. Normal player
-  controls return on exit. Gravity, moving platforms and scripted actions still
-  follow the game's normal simulation.
-- Camera-only travel does not make player-triggered portals load other levels.
-- The patch changes the executable and its ISO directory pointer. It does not
-  modify level assets, save files, EEPROMs or emulator settings.
-
 The reverse-engineering context comes from
 [JTCPP / Elemental Games Modding](https://github.com/JTCPP/Elemental_Games_Modding)
 and [Elemental Games Modding — Expensions](https://github.com/Azurik-Modding-Hub/Elemental_Games_Modding---Expensions).
-This standalone implementation targets the verified PAL executable rather than
-assuming the USA addresses from older symbol tables apply.
-
-## Future additions
-
-This repository is the home for further additions to Azurik's native debug menu.
-The first test release focuses on freecam. New menu actions and debugging tools
-will be added incrementally, with their own compatibility checks and tests.
-The desktop patcher is the installer for these game changes.
+The implementation targets the verified European executable; it does not assume
+that addresses from other regions apply.
