@@ -37,11 +37,14 @@ briefly remains in the stack. Confirm idle animation and exit behavior in Xemu.
 
 ## Development preview: native Debug Laboratory
 
-The `feature/native-debug-laboratory` branch adds nested text-box, oracle-voice
-and Azurik-animation tests to the original menu, plus **Game state → Cles** to
-grant any of the 20 supported key types. Key grants respect the original five
-inventory slots and do not overwrite held keys. This is **1.1.0-dev**, separate
-from the stable 1.0.0 Windows patcher. [Preview workflow and limitations](docs/LABORATORY.md).
+The `feature/native-debug-laboratory` branch adds **WHITE + A + B** to open the
+native menu directly during loaded gameplay. **L3 + START** remains available.
+The menu is in English, with **Text boxes**, **Oracles**, and **Game state → Keys**
+for all 20 supported key types. Fragment/seal messages are under Text boxes;
+additional spoken-only hints are labelled explicitly. There is no Animations
+category. Key grants respect the five inventory slots and do not replace held
+keys. This is **1.1.0-dev.2**, separate from the stable 1.0.0 Windows patcher.
+[Preview workflow, shortcuts and testing limits](docs/LABORATORY.md).
 
 ## Controls
 

@@ -1,9 +1,9 @@
 [
   {
-    "label": "Boites de texte",
+    "label": "Text boxes",
     "children": [
       {
-        "label": "Tutoriels",
+        "label": "Tutorials",
         "children": [
           {
             "label": "training1",
@@ -43,7 +43,92 @@
         ]
       },
       {
-        "label": "Messages demo",
+        "label": "Seals",
+        "children": [
+          {
+            "label": "seal_air",
+            "kind": 1,
+            "key": "loc/english/popups/seal_air"
+          },
+          {
+            "label": "seal_death",
+            "kind": 1,
+            "key": "loc/english/popups/seal_death"
+          },
+          {
+            "label": "seal_earth",
+            "kind": 1,
+            "key": "loc/english/popups/seal_earth"
+          },
+          {
+            "label": "seal_fire",
+            "kind": 1,
+            "key": "loc/english/popups/seal_fire"
+          },
+          {
+            "label": "seal_life",
+            "kind": 1,
+            "key": "loc/english/popups/seal_life"
+          },
+          {
+            "label": "seal_water",
+            "kind": 1,
+            "key": "loc/english/popups/seal_water"
+          }
+        ]
+      },
+      {
+        "label": "Fragment and seal messages",
+        "children": [
+          {
+            "label": "eld_airfrag1 (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_airfrag1"
+          },
+          {
+            "label": "eld_airfrag2 (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_airfrag2"
+          },
+          {
+            "label": "eld_airfrag3 (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_airfrag3"
+          },
+          {
+            "label": "eld_lifefrag1 (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_lifefrag1"
+          },
+          {
+            "label": "eld_seal_air (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_air"
+          },
+          {
+            "label": "eld_seal_earth (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_earth"
+          },
+          {
+            "label": "eld_seal_fire (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_fire"
+          },
+          {
+            "label": "eld_seal_life (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_life"
+          },
+          {
+            "label": "eld_seal_water (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_water"
+          }
+        ]
+      },
+      {
+        "label": "Demo messages",
         "children": [
           {
             "label": "demo_acid",
@@ -83,7 +168,7 @@
         ]
       },
       {
-        "label": "Autres messages",
+        "label": "Other messages",
         "children": [
           {
             "label": "6keys",
@@ -281,36 +366,6 @@
             "key": "loc/english/popups/save_platform"
           },
           {
-            "label": "seal_air",
-            "kind": 1,
-            "key": "loc/english/popups/seal_air"
-          },
-          {
-            "label": "seal_death",
-            "kind": 1,
-            "key": "loc/english/popups/seal_death"
-          },
-          {
-            "label": "seal_earth",
-            "kind": 1,
-            "key": "loc/english/popups/seal_earth"
-          },
-          {
-            "label": "seal_fire",
-            "kind": 1,
-            "key": "loc/english/popups/seal_fire"
-          },
-          {
-            "label": "seal_life",
-            "kind": 1,
-            "key": "loc/english/popups/seal_life"
-          },
-          {
-            "label": "seal_water",
-            "kind": 1,
-            "key": "loc/english/popups/seal_water"
-          },
-          {
             "label": "swim",
             "kind": 1,
             "key": "loc/english/popups/swim"
@@ -351,6 +406,10 @@
             "key": "loc/english/popups/waterspout"
           }
         ]
+      },
+      {
+        "label": "Stop voice",
+        "kind": 4
       }
     ]
   },
@@ -358,7 +417,7 @@
     "label": "Oracles",
     "children": [
       {
-        "label": "Royaumes",
+        "label": "Realm introductions",
         "children": [
           {
             "label": "eld_a1_verb",
@@ -463,57 +522,7 @@
         ]
       },
       {
-        "label": "Fragments et sceaux",
-        "children": [
-          {
-            "label": "eld_airfrag1",
-            "kind": 2,
-            "key": "loc/english/speech/eld_level_intros/eld_airfrag1"
-          },
-          {
-            "label": "eld_airfrag2",
-            "kind": 2,
-            "key": "loc/english/speech/eld_level_intros/eld_airfrag2"
-          },
-          {
-            "label": "eld_airfrag3",
-            "kind": 2,
-            "key": "loc/english/speech/eld_level_intros/eld_airfrag3"
-          },
-          {
-            "label": "eld_lifefrag1",
-            "kind": 2,
-            "key": "loc/english/speech/eld_level_intros/eld_lifefrag1"
-          },
-          {
-            "label": "eld_seal_air",
-            "kind": 2,
-            "key": "loc/english/speech/eld_level_intros/eld_seal_air"
-          },
-          {
-            "label": "eld_seal_earth",
-            "kind": 2,
-            "key": "loc/english/speech/eld_level_intros/eld_seal_earth"
-          },
-          {
-            "label": "eld_seal_fire",
-            "kind": 2,
-            "key": "loc/english/speech/eld_level_intros/eld_seal_fire"
-          },
-          {
-            "label": "eld_seal_life",
-            "kind": 2,
-            "key": "loc/english/speech/eld_level_intros/eld_seal_life"
-          },
-          {
-            "label": "eld_seal_water",
-            "kind": 2,
-            "key": "loc/english/speech/eld_level_intros/eld_seal_water"
-          }
-        ]
-      },
-      {
-        "label": "Conseils",
+        "label": "Other spoken hints",
         "children": [
           {
             "label": "eld_deathhint1",
@@ -618,507 +627,8 @@
         ]
       },
       {
-        "label": "Arreter voix / animation",
+        "label": "Stop voice",
         "kind": 4
-      }
-    ]
-  },
-  {
-    "label": "Animations",
-    "children": [
-      {
-        "label": "Azurik",
-        "children": [
-          {
-            "label": "Repos",
-            "children": [
-              {
-                "label": "attack idle",
-                "kind": 3,
-                "key": "characters/garret4/attack_idle"
-              },
-              {
-                "label": "attack idle 1",
-                "kind": 3,
-                "key": "characters/garret4/attack_idle_1"
-              },
-              {
-                "label": "climb idle",
-                "kind": 3,
-                "key": "characters/garret4/climb_idle"
-              },
-              {
-                "label": "idle",
-                "kind": 3,
-                "key": "characters/garret4/idle"
-              },
-              {
-                "label": "idle 1",
-                "kind": 3,
-                "key": "characters/garret4/idle_1"
-              },
-              {
-                "label": "idle 2",
-                "kind": 3,
-                "key": "characters/garret4/idle_2"
-              },
-              {
-                "label": "idle 3",
-                "kind": 3,
-                "key": "characters/garret4/idle_3"
-              },
-              {
-                "label": "idle 4",
-                "kind": 3,
-                "key": "characters/garret4/idle_4"
-              },
-              {
-                "label": "swim idle",
-                "kind": 3,
-                "key": "characters/garret4/swim_idle"
-              },
-              {
-                "label": "swim idle down",
-                "kind": 3,
-                "key": "characters/garret4/swim_idle_down"
-              },
-              {
-                "label": "swim idle up",
-                "kind": 3,
-                "key": "characters/garret4/swim_idle_up"
-              }
-            ]
-          },
-          {
-            "label": "Actions",
-            "children": [
-              {
-                "label": "360 basic attack",
-                "kind": 3,
-                "key": "characters/garret4/360_basic_attack"
-              },
-              {
-                "label": "360 ledge",
-                "kind": 3,
-                "key": "characters/garret4/360_ledge"
-              },
-              {
-                "label": "360 sweep",
-                "kind": 3,
-                "key": "characters/garret4/360_sweep"
-              },
-              {
-                "label": "attack 1",
-                "kind": 3,
-                "key": "characters/garret4/attack_1"
-              },
-              {
-                "label": "attack 10",
-                "kind": 3,
-                "key": "characters/garret4/attack_10"
-              },
-              {
-                "label": "attack 12",
-                "kind": 3,
-                "key": "characters/garret4/attack_12"
-              },
-              {
-                "label": "attack 13",
-                "kind": 3,
-                "key": "characters/garret4/attack_13"
-              },
-              {
-                "label": "attack 14",
-                "kind": 3,
-                "key": "characters/garret4/attack_14"
-              },
-              {
-                "label": "attack 15",
-                "kind": 3,
-                "key": "characters/garret4/attack_15"
-              },
-              {
-                "label": "attack 16",
-                "kind": 3,
-                "key": "characters/garret4/attack_16"
-              },
-              {
-                "label": "attack 17",
-                "kind": 3,
-                "key": "characters/garret4/attack_17"
-              },
-              {
-                "label": "attack 2",
-                "kind": 3,
-                "key": "characters/garret4/attack_2"
-              },
-              {
-                "label": "attack 3",
-                "kind": 3,
-                "key": "characters/garret4/attack_3"
-              },
-              {
-                "label": "attack 5",
-                "kind": 3,
-                "key": "characters/garret4/attack_5"
-              },
-              {
-                "label": "attack 6",
-                "kind": 3,
-                "key": "characters/garret4/attack_6"
-              },
-              {
-                "label": "attack 7",
-                "kind": 3,
-                "key": "characters/garret4/attack_7"
-              },
-              {
-                "label": "attack 8",
-                "kind": 3,
-                "key": "characters/garret4/attack_8"
-              },
-              {
-                "label": "attack 9",
-                "kind": 3,
-                "key": "characters/garret4/attack_9"
-              },
-              {
-                "label": "attack back",
-                "kind": 3,
-                "key": "characters/garret4/attack_back"
-              },
-              {
-                "label": "attack back kick",
-                "kind": 3,
-                "key": "characters/garret4/attack_back_kick"
-              },
-              {
-                "label": "climb down",
-                "kind": 3,
-                "key": "characters/garret4/climb_down"
-              },
-              {
-                "label": "climb down edge",
-                "kind": 3,
-                "key": "characters/garret4/climb_down_edge"
-              },
-              {
-                "label": "climb drop",
-                "kind": 3,
-                "key": "characters/garret4/climb_drop"
-              },
-              {
-                "label": "climb from jump",
-                "kind": 3,
-                "key": "characters/garret4/climb_from_jump"
-              },
-              {
-                "label": "climb left",
-                "kind": 3,
-                "key": "characters/garret4/climb_left"
-              },
-              {
-                "label": "climb right",
-                "kind": 3,
-                "key": "characters/garret4/climb_right"
-              },
-              {
-                "label": "climb start",
-                "kind": 3,
-                "key": "characters/garret4/climb_start"
-              },
-              {
-                "label": "climb up",
-                "kind": 3,
-                "key": "characters/garret4/climb_up"
-              },
-              {
-                "label": "climb up edge",
-                "kind": 3,
-                "key": "characters/garret4/climb_up_edge"
-              },
-              {
-                "label": "die",
-                "kind": 3,
-                "key": "characters/garret4/die"
-              },
-              {
-                "label": "die 1",
-                "kind": 3,
-                "key": "characters/garret4/die_1"
-              },
-              {
-                "label": "die 2",
-                "kind": 3,
-                "key": "characters/garret4/die_2"
-              },
-              {
-                "label": "die elevator",
-                "kind": 3,
-                "key": "characters/garret4/die_elevator"
-              },
-              {
-                "label": "dive",
-                "kind": 3,
-                "key": "characters/garret4/dive"
-              },
-              {
-                "label": "drowning",
-                "kind": 3,
-                "key": "characters/garret4/drowning"
-              },
-              {
-                "label": "elemental attack",
-                "kind": 3,
-                "key": "characters/garret4/elemental_attack"
-              },
-              {
-                "label": "elemental attack 2",
-                "kind": 3,
-                "key": "characters/garret4/elemental_attack_2"
-              },
-              {
-                "label": "elemental attack 3",
-                "kind": 3,
-                "key": "characters/garret4/elemental_attack_3"
-              },
-              {
-                "label": "fall",
-                "kind": 3,
-                "key": "characters/garret4/fall"
-              },
-              {
-                "label": "fall attack",
-                "kind": 3,
-                "key": "characters/garret4/fall_attack"
-              },
-              {
-                "label": "fall big",
-                "kind": 3,
-                "key": "characters/garret4/fall_big"
-              },
-              {
-                "label": "fly",
-                "kind": 3,
-                "key": "characters/garret4/fly"
-              },
-              {
-                "label": "hang",
-                "kind": 3,
-                "key": "characters/garret4/hang"
-              },
-              {
-                "label": "hang start",
-                "kind": 3,
-                "key": "characters/garret4/hang_start"
-              },
-              {
-                "label": "hoist",
-                "kind": 3,
-                "key": "characters/garret4/hoist"
-              },
-              {
-                "label": "hoist 2",
-                "kind": 3,
-                "key": "characters/garret4/hoist_2"
-              },
-              {
-                "label": "hoist waist",
-                "kind": 3,
-                "key": "characters/garret4/hoist_waist"
-              },
-              {
-                "label": "hose attack 1",
-                "kind": 3,
-                "key": "characters/garret4/hose_attack_1"
-              },
-              {
-                "label": "hose attack 2",
-                "kind": 3,
-                "key": "characters/garret4/hose_attack_2"
-              },
-              {
-                "label": "hose attack 3",
-                "kind": 3,
-                "key": "characters/garret4/hose_attack_3"
-              },
-              {
-                "label": "hover",
-                "kind": 3,
-                "key": "characters/garret4/hover"
-              },
-              {
-                "label": "jump",
-                "kind": 3,
-                "key": "characters/garret4/jump"
-              },
-              {
-                "label": "jump standing",
-                "kind": 3,
-                "key": "characters/garret4/jump_standing"
-              },
-              {
-                "label": "ouch 1",
-                "kind": 3,
-                "key": "characters/garret4/ouch_1"
-              },
-              {
-                "label": "ouch 1b",
-                "kind": 3,
-                "key": "characters/garret4/ouch_1b"
-              },
-              {
-                "label": "ouch 1l",
-                "kind": 3,
-                "key": "characters/garret4/ouch_1l"
-              },
-              {
-                "label": "ouch 1r",
-                "kind": 3,
-                "key": "characters/garret4/ouch_1r"
-              },
-              {
-                "label": "ouch 1t",
-                "kind": 3,
-                "key": "characters/garret4/ouch_1t"
-              },
-              {
-                "label": "ouch elevator",
-                "kind": 3,
-                "key": "characters/garret4/ouch_elevator"
-              },
-              {
-                "label": "prophecy",
-                "kind": 3,
-                "key": "characters/garret4/prophecy"
-              },
-              {
-                "label": "redone jump 1",
-                "kind": 3,
-                "key": "characters/garret4/redone_jump_1"
-              },
-              {
-                "label": "roll forward",
-                "kind": 3,
-                "key": "characters/garret4/roll_forward"
-              },
-              {
-                "label": "run",
-                "kind": 3,
-                "key": "characters/garret4/run"
-              },
-              {
-                "label": "run backwards",
-                "kind": 3,
-                "key": "characters/garret4/run_backwards"
-              },
-              {
-                "label": "slide",
-                "kind": 3,
-                "key": "characters/garret4/slide"
-              },
-              {
-                "label": "smash attack 1",
-                "kind": 3,
-                "key": "characters/garret4/smash_attack_1"
-              },
-              {
-                "label": "smash attack 2",
-                "kind": 3,
-                "key": "characters/garret4/smash_attack_2"
-              },
-              {
-                "label": "smash attack 3",
-                "kind": 3,
-                "key": "characters/garret4/smash_attack_3"
-              },
-              {
-                "label": "step down",
-                "kind": 3,
-                "key": "characters/garret4/step_down"
-              },
-              {
-                "label": "step up",
-                "kind": 3,
-                "key": "characters/garret4/step_up"
-              },
-              {
-                "label": "superjump",
-                "kind": 3,
-                "key": "characters/garret4/superjump"
-              },
-              {
-                "label": "swim 1",
-                "kind": 3,
-                "key": "characters/garret4/swim_1"
-              },
-              {
-                "label": "swim 2",
-                "kind": 3,
-                "key": "characters/garret4/swim_2"
-              },
-              {
-                "label": "swim start",
-                "kind": 3,
-                "key": "characters/garret4/swim_start"
-              },
-              {
-                "label": "touchdown",
-                "kind": 3,
-                "key": "characters/garret4/touchdown"
-              },
-              {
-                "label": "use",
-                "kind": 3,
-                "key": "characters/garret4/use"
-              },
-              {
-                "label": "victory 1",
-                "kind": 3,
-                "key": "characters/garret4/victory_1"
-              },
-              {
-                "label": "victory 2",
-                "kind": 3,
-                "key": "characters/garret4/victory_2"
-              },
-              {
-                "label": "victory 3",
-                "kind": 3,
-                "key": "characters/garret4/victory_3"
-              },
-              {
-                "label": "victory 4",
-                "kind": 3,
-                "key": "characters/garret4/victory_4"
-              },
-              {
-                "label": "victory 5",
-                "kind": 3,
-                "key": "characters/garret4/victory_5"
-              },
-              {
-                "label": "victory 6",
-                "kind": 3,
-                "key": "characters/garret4/victory_6"
-              },
-              {
-                "label": "walk",
-                "kind": 3,
-                "key": "characters/garret4/walk"
-              },
-              {
-                "label": "walk backwards",
-                "kind": 3,
-                "key": "characters/garret4/walk_backwards"
-              }
-            ]
-          },
-          {
-            "label": "Arreter voix / animation",
-            "kind": 4
-          }
-        ]
       }
     ]
   }

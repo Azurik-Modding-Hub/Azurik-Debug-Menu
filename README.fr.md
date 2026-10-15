@@ -80,10 +80,14 @@ la modification dans une nouvelle ISO; le menu s'utilise ensuite dans Azurik.
 [Documentation anglaise et installation depuis Python](README.md)
 · [Azurik Level Editor](https://github.com/Azurik-Modding-Hub/Azurik-Level-Editor)
 
-## Aperçu de développement 1.1.0-dev
+## Aperçu de développement 1.1.0-dev.2
 
-La branche de développement ajoute des sous-menus natifs pour les boîtes de
-texte, les voix des oracles et les animations d’Azurik. **Game state → Cles**
-permet de donner chacune des 20 clés, dans la limite des cinq places du jeu,
-sans remplacer les clés déjà portées. Les animations propres aux oracles
-restent à relier ; leurs voix sont disponibles. [Fonctionnement et limites](docs/LABORATORY.md).
+Appuyer ensemble sur **BLANC + A + B** ouvre directement le menu en partie,
+puis relâcher les trois boutons pour naviguer. **L3 + START** reste disponible.
+Le menu est en anglais : **Text boxes**, **Oracles** et **Game state → Keys**.
+Les panneaux de sceaux et les messages de fragments/sceaux sont classés dans
+Text boxes ; les aperçus de voix sans panneau confirmé portent **voice only**.
+La rubrique Animations et la simulation manuelle ont été retirées. Les animations
+normales du jeu et le repos d’Azurik en Freecam restent actifs. Les 20 types de
+clés sont accessibles dans la limite des cinq places, sans remplacer les clés
+portées. [Fonctionnement, raccourcis et limites](docs/LABORATORY.md).

@@ -5,11 +5,10 @@ import struct
 import pytest
 from unicorn import x86_const as r
 import test_x86 as native
-from freecam.laboratory import patch_xbe, VERSION, POPUP, VOICE, ANIMATION, STOP, GRANT_KEY, KEY_IDS
+from freecam.laboratory import patch_xbe, VERSION, POPUP, VOICE, STOP, GRANT_KEY, KEY_IDS
 
 CATALOG=[dict(label='Text boxes',children=[dict(label='Training',kind=POPUP,key='loc/english/popups/training1')]),
-         dict(label='Oracles',children=[dict(label='Eldwin',children=[dict(label='Water realm',kind=VOICE,key='loc/english/speech/eld_level_intros/eld_w1_hint1')])]),
-         dict(label='Animations',children=[dict(label='Azurik idle',kind=ANIMATION,key='characters/garret4/idle'),dict(label='Stop test',kind=STOP)])]
+         dict(label='Oracles',children=[dict(label='Eldwin',children=[dict(label='Water realm',kind=VOICE,key='loc/english/speech/eld_level_intros/eld_w1_hint1')])])]
 
 @pytest.fixture(scope='module')
 def lab():
@@ -18,11 +17,11 @@ def lab():
     return patch_xbe(Path(path).read_bytes(),CATALOG)
 
 
-def test_native_root_keeps_original_rows_and_has_three_real_groups(lab,monkeypatch):
+def test_native_root_keeps_original_rows_and_has_two_real_groups(lab,monkeypatch):
     image,metadata=lab
-    monkeypatch.setattr(native,'ROOT_MENU_TITLE','Commande menue - '+VERSION)
+    monkeypatch.setattr(native,'ROOT_MENU_TITLE','Debug Menu - '+VERSION)
     u,rows,allocations=native.construct_native_root_menu(image)
-    assert [row['label'] for row in rows]==['Change level...','Play Movie...','Game state...','Freecam','Text boxes','Oracles','Animations']
+    assert [row['label'] for row in rows]==['Change level...','Play Movie...','Game state...','Freecam','Text boxes','Oracles']
     assert all(row['callback']==0x12890 for row in rows[4:])
     # Real generic expansion callback and native child insertion, including a
     # nested category. Only heap allocation boundaries are intercepted.
@@ -59,7 +58,7 @@ def test_native_root_keeps_original_rows_and_has_three_real_groups(lab,monkeypat
     state_rows=expand(rows[2]['address'])
     labels=[bytes(u.mem_read(row+0x1c,100)).split(b'\0')[0] for row in state_rows]
     assert labels[:4]==[b'Earth magic level: 0',b'Air magic level: 0',b'Fire magic level: 0',b'Water magic level: 0']
-    assert labels[4]==b'Cles (inventaire : 5 places)'
+    assert labels[4]==b'Keys (5 inventory slots)'
     assert len(expand(state_rows[4]))==6
 
 
@@ -89,11 +88,10 @@ def test_idle_laboratory_never_reads_an_unattached_graph_world(lab):
     assert u.reg_read(r.UC_X86_REG_ESP)==native.STACK+8
 
 
-@pytest.mark.parametrize('kind',[POPUP,VOICE,ANIMATION,STOP,GRANT_KEY])
+@pytest.mark.parametrize('kind',[POPUP,VOICE,STOP,GRANT_KEY])
 def test_queued_action_waits_for_closed_menu_and_calls_native_abi(lab,kind):
-    image,m=lab;u=native.machine(image);state=m['stateVA'];graph=0x70a000;world=0x70b000;actor=0x70c000;desc=0x70d000;controller=0x70e000;anim=0x70f000
+    image,m=lab;u=native.machine(image);state=m['stateVA'];graph=0x70a000;world=0x70b000;actor=0x70c000;desc=0x70d000;controller=0x70e000
     native.put(u,graph+0x44,world);native.put(u,world+0xcc,actor);native.put(u,world+0xec,controller)
-    native.put(u,actor+0x17c,anim);native.put(u,actor+0x200,0)
     native.put(u,state,desc);native.put(u,state+4,native.OWNER);native.put(u,state+8,world)
     key=native.CODE+0x100;u.mem_write(key,b'example/key\0');native.put(u,desc+4,kind);native.put(u,desc+8,key)
     native.put(u,native.OWNER+0x1c,2);calls=[]
@@ -115,18 +113,15 @@ def test_queued_action_waits_for_closed_menu_and_calls_native_abi(lab,kind):
         calls.append('factory');uc.reg_write(r.UC_X86_REG_EAX,sound);native.return_from(uc,16)
     def volume(uc):calls.append('volume');native.return_from(uc,4)
     def play(uc):calls.append('play');native.return_from(uc)
-    def animate(uc):
-        sp=uc.reg_read(r.UC_X86_REG_ESP);assert [native.get(uc,sp+i) for i in [4,8,12]]==[anim,1234,1]
-        calls.append('animation');native.return_from(uc,12)
     def grant(uc):
         sp=uc.reg_read(r.UC_X86_REG_ESP)
         assert native.get(uc,sp+4)==world and native.get(uc,sp+8)==int.from_bytes(b'exam','little')
         calls.append('key');native.return_from(uc,8)
-    handlers={0x19650:popup,0xA5E20:lookup,0xA1DF0:factory,native.CODE+0x400:volume,native.CODE+0x500:play,0xCAEC0:animate,m['routines']['grantKey']['va']:grant}
+    handlers={0x19650:popup,0xA5E20:lookup,0xA1DF0:factory,native.CODE+0x400:volume,native.CODE+0x500:play,m['routines']['grantKey']['va']:grant}
     invoke();assert not calls and native.get(u,state)==desc
     native.put(u,native.OWNER+0x1c,0);invoke()
     assert native.get(u,state)==0 and u.reg_read(r.UC_X86_REG_ESP)==native.STACK+8
-    assert calls=={POPUP:['popup'],VOICE:['lookup','factory','volume','play'],ANIMATION:['lookup','animation'],STOP:[],GRANT_KEY:['key']}[kind]
+    assert calls=={POPUP:['popup'],VOICE:['lookup','factory','volume','play'],STOP:[],GRANT_KEY:['key']}[kind]
 
 
 @pytest.mark.parametrize('key',sorted(KEY_IDS))
@@ -186,17 +181,48 @@ def test_frame_tail_preserves_the_actual_scheduler_caller_and_stack(lab):
     assert calls==['graph'] and u.reg_read(r.UC_X86_REG_ESP)==native.STACK+4
 
 
-def test_stop_restores_native_animation_selection_before_restoring_controls(lab):
-    image,m=lab;u=native.machine(image);state=m['stateVA'];graph=0x70a000;world=0x70b000;actor=0x70c000;desc=0x70d000
-    native.put(u,graph+0x44,world);native.put(u,world+0xcc,actor);native.put(u,actor+0x154,world);native.put(u,actor+0x200,7)
-    for at,val in [(state,desc),(state+4,native.OWNER),(state+8,world),(state+12,actor),(state+16,world),(desc+4,STOP)]:native.put(u,at,val)
+def test_stop_voice_stops_and_releases_held_sound(lab):
+    image,m=lab;u=native.machine(image);state=m['stateVA'];graph=0x70a000;world=0x70b000;actor=0x70c000;desc=0x70d000;sound=0x70e000;vt=0x70f000
+    native.put(u,graph+0x44,world);native.put(u,world+0xcc,actor)
+    native.put(u,sound,vt);native.put(u,vt+0x38,native.CODE+0x200);native.put(u,vt+0x44,native.CODE+0x300)
+    for at,val in [(state,desc),(state+4,native.OWNER),(state+8,world),(state+20,sound),(state+28,world),(desc+4,STOP)]:native.put(u,at,val)
     native.put(u,native.STACK,native.EXIT);native.put(u,native.STACK+4,graph);u.reg_write(r.UC_X86_REG_ESP,native.STACK)
     calls=[]
-    def restore(uc):
-        sp=uc.reg_read(r.UC_X86_REG_ESP)
-        assert [native.get(uc,sp+i)for i in [4,8,12]]==[actor,7,0]
-        assert native.get(uc,state+12)==0
-        calls.append('restore');native.return_from(uc,12)
-    # Our actual animation gate must reach the original entry trampoline.
-    native.run_until(u,m['routines']['pump']['va'],{m['routines']['animTrampoline']['va']:restore},count=3000)
-    assert calls==['restore'] and native.get(u,state+12)==0
+    def stopped(uc):calls.append('stop');native.return_from(uc)
+    def released(uc):calls.append('release');native.return_from(uc)
+    native.run_until(u,m['routines']['pump']['va'],{native.CODE+0x200:stopped,native.CODE+0x300:released},count=3000)
+    assert calls==['stop','release'] and native.get(u,state+20)==0
+
+
+def test_animation_preview_is_rejected_and_native_animation_code_is_unchanged(lab):
+    from freecam.xbe import offset
+    image,m=lab;source=Path(os.environ['AZURIK_XBE']).read_bytes()
+    at=offset(source,0x42910)
+    assert image[at:at+0x160]==source[at:at+0x160]
+    assert not m['animationPreview']
+    assert all('anim' not in name.lower() for name in m['routines'])
+    with pytest.raises(ValueError,match='Invalid native action'):
+        patch_xbe(source,[dict(label='Removed animation',kind=3,key='characters/garret4/idle')])
+
+
+def test_published_catalogue_keeps_all_panels_and_fragment_messages_under_text_boxes():
+    import json
+    catalogue=json.loads((Path(__file__).resolve().parents[1]/'freecam/laboratory-catalogue.json').read_text('utf8'))
+    assert [r['label']for r in catalogue]==['Text boxes','Oracles']
+    def leaves(rows):
+        for row in rows:
+            if 'children'in row:yield from leaves(row['children'])
+            else:yield row
+    boxes,oracles=[list(leaves([group]))for group in catalogue]
+    panels=[row['key']for row in boxes if row['kind']==POPUP]
+    assert len(panels)==len(set(panels))==67
+    assert not any(row['kind']==POPUP for row in oracles)
+    seals=next(group for group in catalogue[0]['children']if group['label']=='Seals')
+    assert len(list(leaves([seals])))==6
+    messages=next(group for group in catalogue[0]['children']if group['label']=='Fragment and seal messages')
+    related=list(leaves([messages]))
+    assert len(related)==9 and all(row['kind']==VOICE and row['label'].endswith('(voice only)')for row in related)
+    assert not any('frag'in row.get('key','')or '/eld_seal_'in row.get('key','')for row in oracles)
+    voices=[row['key']for row in boxes+oracles if row['kind']==VOICE]
+    assert len(voices)==len(set(voices))==49
+    assert not any(row['kind']==3 for row in boxes+oracles)
