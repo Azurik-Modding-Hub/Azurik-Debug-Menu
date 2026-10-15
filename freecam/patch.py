@@ -194,7 +194,7 @@ def patch_xbe(source):
         output[at:at + len(body)] = body
     if source[0xE6717] != 0:
         raise ValueError('Cheat menu default drifted')
-    output[0xE6717] = 1  # L3 + START exposes the retail menu. No camera shortcut remap.
+    output[0xE6717] = 1  # Historical 1.0.0 developer-button default; Laboratory restores retail 0.
     # Verify every original raw section byte outside the explicit hook whitelist.
     ranges = [(offset(source, address), len(body)) for address, body in edits] + [(0xE6717, 1)]
     for item in sections(source)[1]:

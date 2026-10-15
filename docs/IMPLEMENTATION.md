@@ -1,101 +1,141 @@
-# PAL implementation and validation boundaries
+# European implementation and validation boundaries — 1.1.0
 
-The patch accepts only the 1,798,144-byte PAL executable with SHA-256
-`72e0cf6af079a4024886d9e94812d87d4a35c177135b6196d215abe138866eab`.
-Address mapping is read from that XBE's section table.
+The public Windows and command-line patchers install the complete **1.1.0** native
+Debug Menu by default. The former 1.0.0 Freecam implementation remains its internal
+base; it is not the default public feature set of this release.
+
+Only the 1,798,144-byte European executable with SHA-256
+`72e0cf6af079a4024886d9e94812d87d4a35c177135b6196d215abe138866eab`
+is accepted. Address mapping comes from that XBE's section table. The installer
+verifies instruction signatures before replacing any hook.
+
+## Native integration
 
 | Site | Purpose |
 | --- | --- |
-| VA `0x15F60` | Three-byte jump to the retail menu-only pause predicate at `0x15F40` |
-| VA `0x13E6D` | Extend the retail menu factory epilogue with one generic action row |
-| VA `0x15DE8` | State-1-only controller handler: Y HUD toggle, WHITE/BACK native exit |
-| VA `0x8500D` | Gate player controls through the native blocked-input branch at `0x84FFE` |
-| VA `0x1395F` | Supply the versioned debug-menu header to the existing native title copy |
-| File `0xE6717` | Enable the retail cheat-buttons default so L3 + START exposes the menu |
+| `0x15F60` | Use the retail menu-only pause predicate at `0x15F40` |
+| `0x13E6D` | Extend the original root-menu factory with Freecam and menu groups |
+| `0x15DE8` | State-1 controller handler: Y HUD and WHITE/BACK exit |
+| `0x8500D` | Gate player controls through the native blocked-input branch |
+| `0x1395F` | Supply the English versioned menu title |
+| `0x15DA0` | Poll the timed menu gesture before the native owner dispatcher |
+| `0x66497` | Defer text/voice/key actions to the normal scheduled graph update |
 
-The original RT/D-pad/R3/L3 cheat table and camera creation code are unchanged.
-The hook extends the complete root constructor at `0x138D0`. That retail
-constructor creates **Change level...**, **Play Movie...** and **Game state...**;
-**Freecam** is registered as a fourth sibling in the same parent object's
-children vector. It does not replace an existing entry or require a submenu.
-The `0x13E6D` epilogue is reached after all three original registrations.
-The header call at `0x1395F` is replaced by a same-size `MOV EAX` pointing to
-the null-terminated ASCII string **Commande menue - 1.0.0** in FCDEBUG. The
-native parent-title copy and its 100-byte destination remain unchanged. The
-global build formatter and original build strings are preserved for other callers.
-The menu callback uses the native generic-action ABI (`ECX` = menu context,
-`EDX` = row, one stack argument, `RET 4`). Its context's `+0xB4` field is the
-cheat owner, `+0xB8` the gameplay interface. It calls the same action dispatcher
-at `0x16610` with native action index 3, preserving the native constructor,
-camera stack registration and initial transform. An existing camera is reused.
-The dispatcher resolves the current gameplay interface and camera stack; there
-is no level ID, kingdom name or asset filter in this patch. The shared hooks
-apply to all playable realms in this executable. The native dispatcher skips
-activation when its current camera stack is empty. Each realm still requires
-full-game testing, and title/loading screens are outside the activation scope.
+The complete root constructor at `0x138D0` creates **Change level...**,
+**Play Movie...** and **Game state...**. The patch retains these entries and adds
+**Freecam**, **Text boxes** and **Oracles**, producing six root rows. Keys are
+inserted under the native Game state group. Menu objects use the original row
+constructor, child insertion, selection and submenu navigation.
 
-The player input gate checks component class, Entity, GameWorld and the active
-camera stack at `0x8500D` inside the retail control update `0x84F40`. At this
-site EBP is PlayerPhysics, ESI its local input packet and EDI the retail zero.
-The chain is `PlayerPhysics +0x20 -> Entity +0x154 -> GameWorld +0xA8 -> camera vector`.
-The last entry must have the detached-camera class `0x19E3D0`, belong to the
-player's world through its own `+0x154`, and have its enabled byte `+0x195 == 1`.
-No player/world/camera pointer is cached between frames or realms.
+The title uses **Debug Menu - 1.1.0**. The original title-copy operation and its
+100-byte destination remain unchanged. The global build formatter and build
+strings are preserved for other callers. Menu callbacks use the native generic
+action ABI: `ECX` is menu context, `EDX` is the row, with one stack argument and
+`RET 4`. Context `+0xB4` is the cheat owner; `+0xB8` is the gameplay interface.
 
-Active Freecam enters the native branch `0x84FFE`. This masks local player
-buttons and zeroes movement axes, then continues to `0x851DC`. Raw controller
-state is preserved for camera movement and the Y/WHITE/BACK handler.
-Otherwise the gate replays the displaced six-byte controller lookup and resumes
-at `0x85013`. PUSHFD/PUSHAD and POPAD/POPFD preserve registers and flags on
-both paths. Empty/inverted stacks, absent links, mismatching class/world and
-disabled cameras use normal native input handling.
+## Timed gesture and repeated opening
 
-The original tick `0x8C1E0` and PlayerPhysics vtable `0x19DE24` are unchanged.
-The whole-tick RET in 0.1.2 skipped `AB920` / `AB9B0` frame re-registration and
-could leave the player unscheduled after exit. The new gate preserves those
-calls, animation boundary `CB4F0`, state handling and physics/root-motion work.
-It disables player commands while retaining idle animation and normal simulation.
-Gravity, moving platforms and scripted actions still follow native behavior.
+Each controller has independent state for **WHITE → A → B within one second**.
+The window begins at WHITE, with released or overlapping subsequent presses
+accepted. Input edges are consumed while analog data remains intact. A completed
+gesture waits for button release before it can open the menu again. **L3 + START**
+remains an alternative. The retail additional cheat-button actions retain their
+disabled default, avoiding the separate WHITE jump/boost behavior.
 
-The 0.1.1 ownership check confused GameWorld with the separate scene controller.
-Their fields are distinct: the scene has `+0x2C` for GameWorld and `+0x40` for
-the cheat manager. The input gate uses the world's actual camera vector.
-Real Entity/PlayerPhysics/camera constructors and blocked-input/exit instructions
-are verified before patching. The native camera removal routine clears byte
-`+0x195` at `0x82775`, so controls return even before deferred camera removal.
-The separate developer drone uses this same native camera class and also blocks
-player controls when enabled; its activation setting remains off by default.
+The owner dispatcher receives the actual frame delta. The gesture checks the
+current gameplay interface's world and player getters, avoiding activation during
+loading or before a player is attached. It opens only from owner state `0` (normal
+play) or `1` (Freecam), not over an active menu.
 
-HUD handling changes only the **Show UI** CVar object. It never toggles the
-retail movie-mode freeze byte. Controller edge latches prevent held Y/WHITE
-from repeatedly acting. WHITE and BACK enter the original removal tail at
-`0x15E0D`, clear the owner's camera/state and restore prior HUD visibility.
+Ordinary closure through callback `0x13870` restores `owner+0x1C` to normal play
+or Freecam according to `owner+0x2C`. It keeps the menu vector at `owner+0x20` /
+`owner+0x24`. A nonempty vector does not mean the menu is currently visible.
+Action `0` of `0x16610` already supports that retained state: an empty vector
+constructs and registers the root; a retained vector jumps to `0x167FE`, setting
+state `2` without allocating or inserting another menu. The shortcut invokes this
+native path for both first opening and reopening.
 
-Injected routines and small private state live in a new writable, executable,
-preloaded **FCDEBUG** section. Existing section virtual/raw addresses remain
-fixed. Header-tail pointer adjustments are required for the extra section
-descriptor; original raw bodies are checked against an explicit hook whitelist.
+State `3` at `0x15E37` destroys and removes the last menu. State `4` at `0x15E7B`
+clears the menu vector. Native creation handles those empty-vector cases too.
+The active-state guard prevents repeated gestures from stacking windows.
 
-The ISO writer copies the source and relocates only the new executable to the
-end of the image. Exactly the root executable directory node's sector/length
-fields change in the original prefix. All existing assets stay at their exact
-extents; the entire prefix and appended bytes are verified from disk. An
-exclusive output create prevents overwriting the original or another output.
+## Freecam, input and simulation
 
-Automated x86 tests validate register/stack conventions and local state
-transitions. They do **not** run the full Xbox kernel, renderer or gameplay.
-The root-menu regression test executes the original base constructor, all three
-original row constructors, actual vector insertion and row selection. Heap
-allocation and the optional current-level title accessor are intercepted engine
-boundaries. The three simulation sites at `0x54961`, `0x55FE0` and `0x562DB`
-execute their real calls and branches: only state 1 changes from the paused
-path to the live path. These checks establish the binary integration, without
-claiming a displayed Xbox menu or a running-world gameplay test.
-Player-input regressions execute the retail constructors, vector handling,
-blocked-input branch and complete PlayerPhysics tick. Intercepted engine
-boundaries record scheduling, animation and downstream state/physics calls.
-Tests cover active Freecam, normal gameplay, disabled residual camera entries,
-White/Back exit and repeated activation. They establish control flow and preserved
-updates; they do not reproduce rendered idle animation or every gameplay response.
-This release remains experimental until Xemu testing confirms idle animation,
-normal control after exit, realm transitions, HUD and enemy interactions.
+Freecam calls native action `3` through `0x16610`. This preserves the camera
+constructor, stack registration and initial transform; an existing camera is
+reused. The shared code resolves the current gameplay camera without kingdom or
+level-name filters. Each playable realm still needs full-game verification.
+
+At `0x8500D`, inside control update `0x84F40`, EBP is PlayerPhysics, ESI is its
+local input packet and EDI is the retail zero. The checked chain is
+`PlayerPhysics+0x20 → Entity+0x154 → GameWorld+0xA8 → camera vector`. The last
+entry must have class `0x19E3D0`, belong to the player's world through `+0x154`
+and have its enabled byte `+0x195 == 1`. No camera pointer is cached across realms.
+
+Active Freecam enters `0x84FFE`, masking local player commands and zeroing movement
+axes before continuing to `0x851DC`. Raw input remains available to the camera and
+Y/WHITE/BACK handler. Otherwise the displaced lookup is replayed and execution
+resumes at `0x85013`. Registers and flags are preserved on both paths.
+
+The original entity tick `0x8C1E0`, PlayerPhysics vtable `0x19DE24`, animation
+boundary `0xCB4F0` and scheduling calls `0xAB920` / `0xAB9B0` are retained. This
+keeps idle animation and frame maintenance while blocking player commands. The
+camera removal routine clears the enabled byte at `0x82775`, allowing normal
+controls before deferred camera destruction. Gravity, moving platforms and
+scripted actions continue using native simulation.
+
+The older whole-tick guard could skip frame re-registration and leave Azurik
+frozen; the input-only path from 1.0.0 remains in 1.1.0. No manual animation
+playback action, animation menu or manual actor-animation hook is installed.
+
+HUD handling changes only the **Show UI** CVar. It does not toggle the movie-mode
+freeze byte. Edge latches prevent held Y/WHITE from acting repeatedly. WHITE and
+BACK use the original camera-removal tail at `0x15E0D` and restore prior HUD state.
+
+## Text boxes, voices and keys
+
+The names-only catalogue contains 67 original popup bases and the oracle voice
+resources. Popup previews use the native popup controller, including its matching
+voice where present. Additional fragment/seal recordings are grouped under
+Text boxes by subject and explicitly marked voice-only; their data is distinct
+from the corresponding seal-panel recordings. No unverified panel/audio pair is
+created. Language lookup remains native. The executable-only patch does not
+rename resources or correct the original E6 mirror panel/voice alias mismatch.
+
+Actions close the menu before running. The scheduled graph-update hook executes
+a queued action only with the same attached world and player. It tail-calls the
+original graph updater, preserving the caller return address and native stack.
+Popup/voice previews do not change quest flags. Voice replacement stops and
+releases the previous preview handle before retaining another.
+
+All 20 key types use the native inventory pickup routine. Existing inventory
+checks prevent duplicate grants and preserve the five-slot capacity response.
+The patch does not overwrite inventory entries or alter unrelated quest/power
+flags. Granted keys are live game state and can be saved normally.
+
+## Image writing and verification
+
+Injected code and private state live in additional preloaded XBE sections. Original
+raw section bodies are compared against an explicit hook whitelist. Existing
+section virtual and raw addresses remain fixed; header pointers are adjusted for
+the extra descriptors. The source executable is never modified in place.
+
+The ISO writer copies the source and appends the patched executable. Only the
+root executable directory node's sector/length fields change in the copied
+original prefix. Assets retain their exact extents and bytes. The entire prefix
+and appended data are reread from disk. Exclusive output creation refuses an
+existing file and protects both the input image and other outputs.
+
+## What the tests establish
+
+Isolated x86 tests execute original constructors, row/vector operations, menu
+selection, ordinary closure, reopening, scheduler dispatch, input normalization,
+key pickup and guarded callbacks. Heap allocation and selected engine boundaries
+are intercepted. The tests establish register/stack conventions, control flow,
+inventory behavior and preserved frame scheduling; they do not run the complete
+Xbox kernel, renderer or game.
+
+The desktop capture illustrates the patcher. Menu and control diagrams are
+explicitly explanatory. None is evidence of an in-game result. Full Xemu tests
+remain necessary for repeated menu use, transitions, visual/text/audio previews,
+idle animation, normal control after Freecam, HUD and enemy interactions.

@@ -5,30 +5,36 @@ from pathlib import Path
 import queue
 import threading
 from freecam.iso import build_iso, build_xbe
-from freecam.patch import VERSION
+from freecam.laboratory import VERSION
 
 
 def gui():
     import tkinter as tk
     from tkinter import filedialog, messagebox, ttk
     window = tk.Tk()
-    window.title('Azurik Freecam Debug Menu ' + VERSION + ' — Test')
+    window.title('Azurik Debug Menu ' + VERSION)
     icon = Path(__file__).resolve().parent / 'assets' / 'studio.ico'
     if icon.is_file():
         try:
             window.iconbitmap(str(icon))
         except tk.TclError:
             pass
-    window.geometry('650x360')
-    window.minsize(620, 350)
+    window.geometry('720x520')
+    window.minsize(680, 500)
     area = ttk.Frame(window, padding=24)
     area.pack(fill='both', expand=True)
-    ttk.Label(area, text='Azurik · Freecam Debug Menu', font=('Segoe UI', 18, 'bold')).pack(anchor='w')
-    ttk.Label(area, text='PAL / Europe — version de test · Test build', font=('Segoe UI', 10)).pack(anchor='w', pady=(4, 18))
+    ttk.Label(area, text='Azurik · Debug Menu ' + VERSION, font=('Segoe UI', 18, 'bold')).pack(anchor='w')
+    ttk.Label(area, text='PAL / Europe (En, Fr, De) · Native menu in English', font=('Segoe UI', 10)).pack(anchor='w', pady=(4, 18))
     ttk.Label(area, text='Sélectionnez votre ISO Xbox. Une nouvelle copie sera créée.\n'
               'Choose your Xbox ISO. The original file is preserved.').pack(anchor='w')
-    ttk.Label(area, text='L3 + START : menu debug · Freecam : 4e entrée / 4th entry\n'
-              'Blanc / White : quitter · Y : afficher / masquer le HUD').pack(anchor='w', pady=15)
+    ttk.Label(area, text='Blanc → A → B en 1 seconde : ouvrir / rouvrir le menu.\n'
+              'White → A → B within 1 second: open / reopen the menu.\n'
+              'Relâchez les boutons avant de recommencer. / Release all buttons to repeat.\n'
+              'Alternative : L3 + START · Freecam : 4e entrée / 4th entry\n'
+              'Freecam : Blanc / White = quitter / exit · Y = HUD',
+              wraplength=650).pack(anchor='w', pady=15)
+    ttk.Label(area, text='Inclus / Included: Freecam · Text boxes · Oracles · Game state keys',
+              wraplength=650).pack(anchor='w', pady=(0, 12))
     status = tk.StringVar(value='Prêt / Ready')
     bar = ttk.Progressbar(area, maximum=100)
     bar.pack(fill='x', pady=(4, 8))
@@ -42,7 +48,7 @@ def gui():
         if not source:
             return
         destination = filedialog.asksaveasfilename(title='Nouvelle ISO / New ISO',
-            initialfile=Path(source).stem + '-Freecam-Debug.iso', defaultextension='.iso',
+            initialfile=Path(source).stem + '-Debug-Menu-' + VERSION + '.iso', defaultextension='.iso',
             filetypes=[('Xbox ISO', '*.iso')], confirmoverwrite=False)
         if not destination:
             return
@@ -70,7 +76,7 @@ def gui():
                     if event[0] == 'done':
                         bar['value'] = 100
                         status.set('ISO créée / ISO created')
-                        messagebox.showinfo('Terminé / Done', event[1] + '\n\nRedémarrez complètement Xemu.\nCold-boot Xemu with this image.')
+                        messagebox.showinfo('Terminé / Done', event[1] + '\n\nRedémarrez le jeu avec cette nouvelle ISO, sans ancien instantané.\nCold-boot this new image without an old save state.\n\nVidez le cache du jeu si les changements restent absents.\nClear the game cache if changes do not appear.')
                     else:
                         status.set('Échec / Failed')
                         messagebox.showerror('Azurik', event[1])
@@ -83,7 +89,7 @@ def gui():
             messagebox.showinfo('Azurik', 'Construction en cours. Attendez la fin.\nBuild in progress. Wait for completion.')
             return
         window.destroy()
-    button = ttk.Button(area, text='Créer une ISO de test / Create test ISO', command=create)
+    button = ttk.Button(area, text='Créer une nouvelle ISO / Create a new ISO', command=create)
     button.pack(anchor='w', pady=(18, 0))
     window.protocol('WM_DELETE_WINDOW', close)
     window.after(150, poll)
@@ -91,7 +97,7 @@ def gui():
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Azurik PAL/EU Freecam Debug Menu test patch')
+    parser = argparse.ArgumentParser(description='Azurik PAL/EU native Debug Menu ' + VERSION)
     parser.add_argument('--version', action='version', version=VERSION)
     parser.add_argument('--input', type=Path)
     parser.add_argument('--output', type=Path)

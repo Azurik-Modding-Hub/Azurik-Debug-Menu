@@ -1,0 +1,635 @@
+[
+  {
+    "label": "Text boxes",
+    "children": [
+      {
+        "label": "Tutorials",
+        "children": [
+          {
+            "label": "training1",
+            "kind": 1,
+            "key": "loc/english/popups/training1"
+          },
+          {
+            "label": "training2",
+            "kind": 1,
+            "key": "loc/english/popups/training2"
+          },
+          {
+            "label": "training3",
+            "kind": 1,
+            "key": "loc/english/popups/training3"
+          },
+          {
+            "label": "training4",
+            "kind": 1,
+            "key": "loc/english/popups/training4"
+          },
+          {
+            "label": "training4p",
+            "kind": 1,
+            "key": "loc/english/popups/training4p"
+          },
+          {
+            "label": "training5",
+            "kind": 1,
+            "key": "loc/english/popups/training5"
+          },
+          {
+            "label": "training6",
+            "kind": 1,
+            "key": "loc/english/popups/training6"
+          }
+        ]
+      },
+      {
+        "label": "Seals",
+        "children": [
+          {
+            "label": "seal_air",
+            "kind": 1,
+            "key": "loc/english/popups/seal_air"
+          },
+          {
+            "label": "seal_death",
+            "kind": 1,
+            "key": "loc/english/popups/seal_death"
+          },
+          {
+            "label": "seal_earth",
+            "kind": 1,
+            "key": "loc/english/popups/seal_earth"
+          },
+          {
+            "label": "seal_fire",
+            "kind": 1,
+            "key": "loc/english/popups/seal_fire"
+          },
+          {
+            "label": "seal_life",
+            "kind": 1,
+            "key": "loc/english/popups/seal_life"
+          },
+          {
+            "label": "seal_water",
+            "kind": 1,
+            "key": "loc/english/popups/seal_water"
+          }
+        ]
+      },
+      {
+        "label": "Fragment and seal messages",
+        "children": [
+          {
+            "label": "eld_airfrag1 (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_airfrag1"
+          },
+          {
+            "label": "eld_airfrag2 (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_airfrag2"
+          },
+          {
+            "label": "eld_airfrag3 (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_airfrag3"
+          },
+          {
+            "label": "eld_lifefrag1 (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_lifefrag1"
+          },
+          {
+            "label": "eld_seal_air (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_air"
+          },
+          {
+            "label": "eld_seal_earth (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_earth"
+          },
+          {
+            "label": "eld_seal_fire (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_fire"
+          },
+          {
+            "label": "eld_seal_life (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_life"
+          },
+          {
+            "label": "eld_seal_water (voice only)",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_seal_water"
+          }
+        ]
+      },
+      {
+        "label": "Demo messages",
+        "children": [
+          {
+            "label": "demo_acid",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_acid"
+          },
+          {
+            "label": "demo_firewall",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_firewall"
+          },
+          {
+            "label": "demo_firewallb",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_firewallb"
+          },
+          {
+            "label": "demo_ice",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_ice"
+          },
+          {
+            "label": "demo_intro",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_intro"
+          },
+          {
+            "label": "demo_jump",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_jump"
+          },
+          {
+            "label": "demo_jumpb",
+            "kind": 1,
+            "key": "loc/english/popups/demo/demo_jumpb"
+          }
+        ]
+      },
+      {
+        "label": "Other messages",
+        "children": [
+          {
+            "label": "6keys",
+            "kind": 1,
+            "key": "loc/english/popups/6keys"
+          },
+          {
+            "label": "a3safe",
+            "kind": 1,
+            "key": "loc/english/popups/a3safe"
+          },
+          {
+            "label": "a3slide",
+            "kind": 1,
+            "key": "loc/english/popups/a3slide"
+          },
+          {
+            "label": "a5cannon",
+            "kind": 1,
+            "key": "loc/english/popups/a5cannon"
+          },
+          {
+            "label": "a5ladder",
+            "kind": 1,
+            "key": "loc/english/popups/a5ladder"
+          },
+          {
+            "label": "air_powerup",
+            "kind": 1,
+            "key": "loc/english/popups/air_powerup"
+          },
+          {
+            "label": "chromatic_powerup",
+            "kind": 1,
+            "key": "loc/english/popups/chromatic_powerup"
+          },
+          {
+            "label": "climb",
+            "kind": 1,
+            "key": "loc/english/popups/climb"
+          },
+          {
+            "label": "collect_obsidians",
+            "kind": 1,
+            "key": "loc/english/popups/collect_obsidians"
+          },
+          {
+            "label": "d1nobridge",
+            "kind": 1,
+            "key": "loc/english/popups/d1nobridge"
+          },
+          {
+            "label": "diamonds",
+            "kind": 1,
+            "key": "loc/english/popups/diamonds"
+          },
+          {
+            "label": "e2silvertele",
+            "kind": 1,
+            "key": "loc/english/popups/e2silvertele"
+          },
+          {
+            "label": "e6daylight",
+            "kind": 1,
+            "key": "loc/english/popups/e6daylight"
+          },
+          {
+            "label": "e6mirrors",
+            "kind": 1,
+            "key": "loc/english/popups/e6mirrors"
+          },
+          {
+            "label": "earth_powerup",
+            "kind": 1,
+            "key": "loc/english/popups/earth_powerup"
+          },
+          {
+            "label": "emeralds",
+            "kind": 1,
+            "key": "loc/english/popups/emeralds"
+          },
+          {
+            "label": "fire_powerup",
+            "kind": 1,
+            "key": "loc/english/popups/fire_powerup"
+          },
+          {
+            "label": "firewall",
+            "kind": 1,
+            "key": "loc/english/popups/firewall"
+          },
+          {
+            "label": "gameover",
+            "kind": 1,
+            "key": "loc/english/popups/gameover"
+          },
+          {
+            "label": "gem",
+            "kind": 1,
+            "key": "loc/english/popups/gem"
+          },
+          {
+            "label": "goldtele",
+            "kind": 1,
+            "key": "loc/english/popups/goldtele"
+          },
+          {
+            "label": "health",
+            "kind": 1,
+            "key": "loc/english/popups/health"
+          },
+          {
+            "label": "joystick",
+            "kind": 1,
+            "key": "loc/english/popups/joystick"
+          },
+          {
+            "label": "jump",
+            "kind": 1,
+            "key": "loc/english/popups/jump"
+          },
+          {
+            "label": "key",
+            "kind": 1,
+            "key": "loc/english/popups/key"
+          },
+          {
+            "label": "life",
+            "kind": 1,
+            "key": "loc/english/popups/life"
+          },
+          {
+            "label": "obsidian010_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian010_"
+          },
+          {
+            "label": "obsidian020_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian020_"
+          },
+          {
+            "label": "obsidian030_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian030_"
+          },
+          {
+            "label": "obsidian040_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian040_"
+          },
+          {
+            "label": "obsidian050_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian050_"
+          },
+          {
+            "label": "obsidian060_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian060_"
+          },
+          {
+            "label": "obsidian070_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian070_"
+          },
+          {
+            "label": "obsidian080_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian080_"
+          },
+          {
+            "label": "obsidian090_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian090_"
+          },
+          {
+            "label": "obsidian100_",
+            "kind": 1,
+            "key": "loc/english/popups/obsidian100_"
+          },
+          {
+            "label": "rubies",
+            "kind": 1,
+            "key": "loc/english/popups/rubies"
+          },
+          {
+            "label": "sapphires",
+            "kind": 1,
+            "key": "loc/english/popups/sapphires"
+          },
+          {
+            "label": "save_platform",
+            "kind": 1,
+            "key": "loc/english/popups/save_platform"
+          },
+          {
+            "label": "swim",
+            "kind": 1,
+            "key": "loc/english/popups/swim"
+          },
+          {
+            "label": "switch",
+            "kind": 1,
+            "key": "loc/english/popups/switch"
+          },
+          {
+            "label": "w1periscope",
+            "kind": 1,
+            "key": "loc/english/popups/w1periscope"
+          },
+          {
+            "label": "w1torpedo",
+            "kind": 1,
+            "key": "loc/english/popups/w1torpedo"
+          },
+          {
+            "label": "w2firewall",
+            "kind": 1,
+            "key": "loc/english/popups/w2firewall"
+          },
+          {
+            "label": "w2spout",
+            "kind": 1,
+            "key": "loc/english/popups/w2spout"
+          },
+          {
+            "label": "water_powerup",
+            "kind": 1,
+            "key": "loc/english/popups/water_powerup"
+          },
+          {
+            "label": "waterspout",
+            "kind": 1,
+            "key": "loc/english/popups/waterspout"
+          }
+        ]
+      },
+      {
+        "label": "Stop voice",
+        "kind": 4
+      }
+    ]
+  },
+  {
+    "label": "Oracles",
+    "children": [
+      {
+        "label": "Realm introductions",
+        "children": [
+          {
+            "label": "eld_a1_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_a1_verb"
+          },
+          {
+            "label": "eld_a3_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_a3_verb"
+          },
+          {
+            "label": "eld_a5_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_a5_verb"
+          },
+          {
+            "label": "eld_a6_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_a6_verb"
+          },
+          {
+            "label": "eld_d1_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_d1_verb"
+          },
+          {
+            "label": "eld_d2_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_d2_verb"
+          },
+          {
+            "label": "eld_e2_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_e2_verb"
+          },
+          {
+            "label": "eld_e5_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_e5_verb"
+          },
+          {
+            "label": "eld_e6_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_e6_verb"
+          },
+          {
+            "label": "eld_e7_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_e7_verb"
+          },
+          {
+            "label": "eld_f1_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_f1_verb"
+          },
+          {
+            "label": "eld_f2_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_f2_verb"
+          },
+          {
+            "label": "eld_f3_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_f3_verb"
+          },
+          {
+            "label": "eld_f4_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_f4_verb"
+          },
+          {
+            "label": "eld_f6_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_f6_verb"
+          },
+          {
+            "label": "eld_l1_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_l1_verb"
+          },
+          {
+            "label": "eld_town_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_town_verb"
+          },
+          {
+            "label": "eld_w2_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_w2_verb"
+          },
+          {
+            "label": "eld_w3_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_w3_verb"
+          },
+          {
+            "label": "eld_w4_verb",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_w4_verb"
+          }
+        ]
+      },
+      {
+        "label": "Other spoken hints",
+        "children": [
+          {
+            "label": "eld_deathhint1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_deathhint1"
+          },
+          {
+            "label": "eld_w1_hint1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_w1_hint1"
+          },
+          {
+            "label": "eld_w1_hint2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/eld_w1_hint2"
+          },
+          {
+            "label": "hint_air1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_air1"
+          },
+          {
+            "label": "hint_air2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_air2"
+          },
+          {
+            "label": "hint_air3",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_air3"
+          },
+          {
+            "label": "hint_earth1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_earth1"
+          },
+          {
+            "label": "hint_earth2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_earth2"
+          },
+          {
+            "label": "hint_earth3",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_earth3"
+          },
+          {
+            "label": "hint_fire1",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_fire1"
+          },
+          {
+            "label": "hint_fire2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_fire2"
+          },
+          {
+            "label": "hint_fire3",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_fire3"
+          },
+          {
+            "label": "hint_none",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_none"
+          },
+          {
+            "label": "hint_water2",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_water2"
+          },
+          {
+            "label": "hint_water3",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/hint_water3"
+          },
+          {
+            "label": "level_done",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/level_done"
+          },
+          {
+            "label": "nokey",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/nokey"
+          },
+          {
+            "label": "w1_game_start",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/w1_game_start"
+          },
+          {
+            "label": "w1_general",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/w1_general"
+          },
+          {
+            "label": "w1_steam",
+            "kind": 2,
+            "key": "loc/english/speech/eld_level_intros/w1_steam"
+          }
+        ]
+      },
+      {
+        "label": "Stop voice",
+        "kind": 4
+      }
+    ]
+  }
+]

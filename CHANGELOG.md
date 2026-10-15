@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.1.0 — Native menu shortcuts, text boxes, oracles and keys
+
+- Install the complete 1.1.0 menu by default from the Windows and command-line
+  patchers. Display **Debug Menu - 1.1.0** and English labels in the game.
+- Open and reopen with **WHITE → A → B within one second**. Released steps,
+  overlapping presses and the alternative **L3 + START** shortcut are supported.
+- Reuse the native menu retained after ordinary closure. Reopening no longer
+  requires the original cheat code, and an already open menu is not stacked.
+- Keep the retail additional cheat-button actions disabled, preventing the
+  unintended WHITE jump/boost while preserving normal player controls.
+- Add **Text boxes** with 67 original popup sequences. Put seal panels and nine
+  additional fragment/seal recordings here, identifying voice-only previews.
+- Add **Oracles** for realm introductions and other spoken hints, with **Stop
+  voice**. Playback follows the game's localization where available.
+- Add **Game state → Keys (5 inventory slots)** for all 20 verified key types.
+  Preserve duplicate checks, native pickup behaviour and the five-slot limit.
+- Remove manual animation playback and its menu category. Preserve normal game
+  animations, idle movement and the existing Freecam control/exit corrections.
+- Include an updated Windows patcher capture and clearly labelled menu/control
+  diagrams. They do not claim an in-game screenshot or a completed Xemu test.
+- Pass 247 automated tests, including the public release entry point. Verify the
+  compiled Windows application, its bundled catalogue and a full ISO build with
+  complete readback and original preservation. Full Xemu gameplay checks remain
+  pending.
+
 ## 1.0.0 — Keep idle animation and restore controls after Freecam
 
 - Show **Commande menue - 1.0.0** in the native debug-menu header and document

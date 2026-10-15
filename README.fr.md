@@ -1,81 +1,119 @@
 # Azurik — Menu debug
 
-Version **1.0.0** pour le jeu Xbox **PAL / Europe**. Le menu debug déjà intégré au jeu reçoit
-une entrée **Freecam** qui active la caméra du code triche d'origine.
-Le monde continue de fonctionner. Les commandes de déplacement, de saut et
-d'attaque d'Azurik sont neutralisées pendant la caméra libre ; ses animations
-d'attente, sa physique et ses mises à jour continuent normalement.
+La version **1.1.0** enrichit le menu debug déjà présent dans *Azurik: Rise of
+Perathia* : caméra libre, aperçus de boîtes de texte et de voix d'oracles, et ajout
+de clés. En pleine partie, appuyez sur **BLANC → A → B en moins d'une seconde**.
+Après une fermeture normale, relâchez les boutons et recommencez pour rouvrir le
+menu, sans refaire le code triche.
 
-Le correctif utilise le programme commun du jeu et la caméra du royaume chargé.
-Il s'applique à **tous les royaumes jouables** de cette version européenne,
-sans restriction à W1. Leur fonctionnement reste à vérifier dans le jeu.
-Activez la caméra pendant une partie chargée, hors écran titre et chargement.
+Le menu du jeu est **en anglais** et affiche **Debug Menu - 1.1.0**. Le logiciel
+Windows installe cette version dans une nouvelle copie de votre ISO **PAL / Europe**.
+Ce dépôt et ses téléchargements ne contiennent aucune copie du jeu.
 
-**Freecam apparaît comme quatrième entrée du menu debug d'Azurik**, au même
-endroit que les trois entrées européennes d'origine **Change level...**,
-**Play Movie...** et **Game state...**. Les trois entrées existantes sont
-conservées. Aucun sous-menu supplémentaire n'est nécessaire. Le logiciel
-Windows installe ce changement dans l'ISO ; le menu s'utilise ensuite en jeu.
+[Télécharger la version 1.1.0](https://github.com/Azurik-Modding-Hub/Azurik-Debug-Menu/releases/tag/v1.1.0)
+· [Documentation anglaise](README.md)
+· [Guide détaillé en anglais](docs/LABORATORY.md)
+· [Azurik Level Editor](https://github.com/Azurik-Modding-Hub/Azurik-Level-Editor)
 
-L'ancien texte de build est remplacé dans l'en-tête par
-**Commande menue - 1.0.0**. Pour ouvrir ce menu pendant une partie,
-appuyez sur **L3 + START**, choisissez **Freecam**, puis confirmez avec **START**.
+![Interface réelle du logiciel Windows 1.1.0](docs/screenshots/patcher-1.1.0.png)
 
-La version **1.0.0 corrige Azurik qui reste figé après la sortie**. Le blocage
-précédent coupait aussi la remise à jour du personnage pour les images suivantes.
-Le correctif bloque maintenant uniquement ses commandes par le chemin natif du
-jeu, et conserve son animation. Le drapeau natif de la caméra libère les commandes
-dès la sortie, même si une ancienne référence à la caméra subsiste brièvement.
-L'animation d'attente et la reprise des commandes restent à confirmer dans Xemu.
+Capture de l'interface du logiciel Windows 1.1.0 ; elle ne montre pas un test en jeu.
 
-La gravité, les plateformes mobiles et les scripts gardent leur fonctionnement
-normal pendant la caméra libre.
+![Organisation du menu 1.1.0 — schéma explicatif](docs/screenshots/native-menu-1.1.0.png)
 
-[Télécharger le correctif de test 1.0.0](https://github.com/Azurik-Modding-Hub/Azurik-Debug-Menu/releases/tag/v1.0.0)
+Schéma explicatif de l'organisation du menu ; ce n'est pas une capture du jeu.
 
-## Utilisation
+## Fonctionnalités
 
-1. Ouvrez **Azurik Freecam Patcher.exe** depuis les téléchargements du dépôt.
-2. Choisissez votre ISO Xbox d'Azurik, puis le nom d'une **nouvelle ISO**.
-3. Attendez la copie et la vérification. L'original et les sauvegardes sont conservés.
+Le menu principal comporte **six entrées** : **Change level...**, **Play Movie...**,
+**Game state...**, **Freecam**, **Text boxes** et **Oracles**.
+
+- **Freecam** active la caméra libre d'origine. Les commandes de déplacement,
+  d'attaque et de saut d'Azurik sont bloquées ; ses animations de repos, sa physique
+  et le monde continuent. **BLANC** ou **BACK** quitte la caméra, **Y** masque ou
+  réaffiche le HUD.
+- **Text boxes** propose 67 séquences originales de boîtes de texte, avec leurs
+  voix lorsqu'elles existent. Les panneaux des sceaux et les messages liés aux
+  fragments/sceaux sont ici. Les enregistrements sans panneau identifié portent
+  explicitement **(voice only)**.
+- **Oracles** contient les introductions des royaumes et les autres conseils
+  parlés. Les messages de fragments/sceaux restent dans Text boxes. **Stop voice**
+  arrête un aperçu audio.
+- **Game state → Keys (5 inventory slots)** donne accès aux 20 types de clés
+  vérifiés, classés par royaume. **Give: ...** utilise la routine d'inventaire
+  d'origine. Une clé portée n'est pas dupliquée ; si les cinq places sont prises,
+  aucune clé n'est remplacée.
+
+La rubrique **Animations** et la lecture manuelle d'animations ont été retirées.
+Les animations normales du jeu sont conservées. Le code commun de la caméra
+s'applique à tous les royaumes jouables de la version européenne prise en charge ;
+leur fonctionnement complet reste à confirmer en jeu.
+
+## Installation
+
+1. Téléchargez et extrayez le logiciel Windows de la
+   [release 1.1.0](https://github.com/Azurik-Modding-Hub/Azurik-Debug-Menu/releases/tag/v1.1.0).
+2. Ouvrez **Azurik Freecam Patcher.exe** et choisissez votre ISO/XISO d'Azurik.
+3. Choisissez un nom de **nouvelle ISO**. Le logiciel copie, modifie et vérifie
+   l'image. Il ne remplace aucun fichier de sortie existant.
 4. Chargez cette nouvelle ISO dans Xemu et redémarrez complètement la console.
-5. En jeu, utilisez **L3 + START** pour ouvrir le menu debug. Sélectionnez
-   **Freecam**, puis validez avec **START**.
-6. **Y** masque ou réaffiche le HUD. **Blanc** quitte la caméra libre;
-   **BACK** fonctionne aussi. Le HUD retrouve son état précédent à la sortie.
+   Ne reprenez pas un ancien instantané conservant l'ancien programme.
+5. Dans une partie chargée, appuyez sur **BLANC → A → B en moins d'une seconde**.
 
-Le code d'origine fonctionne également : **RT, bas, haut, bas, haut, R3, L3**.
-Utilisez la croix directionnelle, relâchez chaque bouton entre les étapes et
-ne maintenez pas RT pendant toute la séquence.
+Vérifiez l'en-tête **Debug Menu - 1.1.0** et les six entrées principales. Un ancien
+nom ou seulement trois/quatre entrées signifie qu'une ancienne version est encore
+chargée. L'ISO source reste conservée ; la relancer permet de revenir au jeu d'origine.
+
+## Commandes
+
+| Action | Boutons Xbox |
+| --- | --- |
+| Ouvrir ou rouvrir le menu | **BLANC**, puis **A**, puis **B**, en moins d'une seconde |
+| Autre raccourci | **L3 + START** |
+| Valider une entrée | Commandes natives du menu, validation avec **START** |
+| Activer la caméra libre | **Freecam**, puis **START** |
+| Déplacer et orienter la caméra | Commandes natives de la caméra |
+| Masquer / afficher le HUD en Freecam | **Y** |
+| Quitter la Freecam | **BLANC** ou **BACK** |
+
+La seconde démarre à l'appui sur BLANC. Vous pouvez relâcher les boutons entre les
+étapes ou les maintenir. Relâchez les boutons avant une nouvelle séquence. Après
+expiration, recommencez avec un nouvel appui sur BLANC. Le menu fermé normalement
+est réutilisé : le raccourci n'empile pas plusieurs fenêtres. Le code d'origine
+reste disponible.
+
+BLANC seul quitte toujours la Freecam. Les commandes supplémentaires de triche
+qui pouvaient provoquer un saut ou une poussée avec BLANC restent désactivées.
+Le HUD retrouve son état précédent en quittant la caméra.
 
 EDIT : You need to clear the cache for the changes you make to take effect ! Don’t worry, this won’t affect your save files in any way!
 
 Pour le cache Xbox, utilisez uniquement **X / Y / Z**. Gardez la partition **E**
-et le disque virtuel contenant vos sauvegardes. Le logiciel ne les efface pas.
-Évitez de reprendre un ancien snapshot de Xemu qui conserve l'ancien programme.
-Si le menu ne comporte que trois entrées, vérifiez que Xemu utilise bien la
-nouvelle ISO, puis redémarrez complètement cette copie.
+et le disque virtuel contenant vos sauvegardes. Le logiciel ne les efface pas et
+ne modifie pas les paramètres de Xemu ni l'EEPROM.
 
-## Compatibilité et vérifications
+## Compatibilité et limites
 
-Le programme d'origine doit être la version PAL / Europe prise en charge.
-Une ISO avec des niveaux déjà modifiés est acceptée si son `default.xbe` reste
-d'origine. Les niveaux, dont W1, ne sont pas changés par cet outil.
-Les anciennes ISO et les fichiers existants ne sont pas remplacés.
+Seul le programme européen d'origine pris en charge est accepté. Une ISO avec des
+niveaux modifiés convient si son `default.xbe` reste d'origine. Les fichiers des
+niveaux ne sont pas changés par ce logiciel. Les autres régions, les fichiers
+incomplets et les exécutables déjà modifiés sont refusés.
 
-Les instructions ont été vérifiées dans des tests x86 isolés et le contenu de
-l'ISO est relu après construction. **Le fonctionnement complet dans le jeu
-reste à tester**, notamment les collisions, les transitions de menu et le HUD.
-Les portails déclenchés par le personnage restent liés au personnage.
+Les aperçus de panneaux et de voix sont lancés après la fermeture du menu, dans le
+même monde chargé, sans modifier les drapeaux de quête. L'ajout de clés modifie
+l'inventaire et peut être conservé par une sauvegarde normale du jeu. Un aperçu de
+voix ne crée pas d'apparition d'oracle ni de nouveau panneau correspondant.
+La langue du jeu détermine la lecture ; les voix originales des panneaux de démo
+existent uniquement en anglais. La différence de nom d'origine entre le panneau
+et la voix du miroir E6 n'est pas corrigée par cet outil limité à l'exécutable.
 
-Ce dépôt contient les sources et l'outil d'installation; il ne contient aucune
-copie du jeu. Pour revenir à l'état d'origine, utilisez votre ISO précédente.
+Les portails déclenchés par le personnage restent liés à sa position. La gravité,
+les plateformes mobiles et les actions scriptées continuent normalement.
 
-## Prochains ajouts
-
-Ce dépôt accueillera les futurs outils ajoutés à ce même menu debug du jeu.
-La première version de test concerne la caméra libre. L'outil Windows installe
-la modification dans une nouvelle ISO; le menu s'utilise ensuite dans Azurik.
-
-[Documentation anglaise et installation depuis Python](README.md)
-· [Azurik Level Editor](https://github.com/Azurik-Modding-Hub/Azurik-Level-Editor)
+**247 tests automatisés ont réussi**, avec l'installation de la version actuelle
+par le logiciel et la ligne de commande. Le programme Windows compilé a produit
+le correctif 1.1.0 attendu et une ISO entièrement vérifiée, sans modifier l'originale.
+Ces tests natifs isolés et la relecture de l'ISO ne remplacent pas une partie dans
+Xemu. **Le fonctionnement complet en jeu reste à confirmer**, notamment les
+ouvertures/fermetures répétées, les transitions, le HUD, les voix, les panneaux,
+le repos d'Azurik et la reprise de ses commandes.
