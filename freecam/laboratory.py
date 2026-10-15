@@ -11,7 +11,7 @@ import struct
 from .patch import Code, dword, jump, patch_xbe as freecam_patch
 from .xbe import allocate,offset,sections
 
-VERSION='1.1.0-dev.3'
+VERSION='1.1.0-dev.4'
 GROUP,POPUP,VOICE,STOP,GRANT_KEY=0,1,2,4,5
 
 # Names and inventory IDs verified against the EU critters_item_data table.
@@ -227,7 +227,7 @@ def patch_xbe(source,catalog):
         stateVA=state,routines=routines,sectionVA=va,sectionRaw=raw,sectionUsedBytes=used,catalog=catalog,
         hotkeyStateVA=hotkey_state,activation=dict(primary='WHITE, then A, then B within 1 second',alternative='L3 + START',releaseAllToRearm=True,
             sequenceWindowSeconds=1.0,buttonReleaseBetweenStepsAllowed=True,controllerStateBytes=16,
-            liveDispatcherVA=ENTRY,normalAndFreecam=True,menuLanguage='English'),
+            liveDispatcherVA=ENTRY,normalAndFreecam=True,reuseRetainedMenu=True,menuLanguage='English'),
         nativeGameTested=False,animationPreview=False,playerCheatButtonsEnabled=False,frameCallerReturn=0x6649C,freecam=freecam,
         keys=keys,keyInventoryCapacity=5,keyAction='native pickup; owned keys unchanged; full inventory refused',
         hooks=[dict(offset=pos,bytes=length)for pos,length in ranges],otherBaselineSectionBytesPreserved=True)

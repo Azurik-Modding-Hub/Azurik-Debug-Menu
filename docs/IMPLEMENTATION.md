@@ -99,3 +99,27 @@ White/Back exit and repeated activation. They establish control flow and preserv
 updates; they do not reproduce rendered idle animation or every gameplay response.
 This release remains experimental until Xemu testing confirms idle animation,
 normal control after exit, realm transitions, HUD and enemy interactions.
+
+## Development preview 1.1.0-dev.4: reopening the retained menu
+
+The preview adds the timed **WHITE → A → B** shortcut independently of the
+retail cheat-buttons setting. All three presses must fit within one second of
+WHITE. The stable 1.0.0 patch described above remains a separate mode.
+
+The native normal-close callback at `0x13870` restores the cheat owner's state
+at `+0x1C` to normal play or Freecam according to `owner+0x2C`. It retains the
+menu vector at `owner+0x20` / `owner+0x24`. A nonempty vector therefore does not
+mean the menu is currently open.
+
+The shortcut permits the native open action only while the owner's state is
+`0` or `1`. It no longer requires that retained vector to be empty. Action `0`
+of `0x16610` checks the vector itself: an empty vector constructs and registers
+the root menu; a retained menu jumps directly to `0x167FE`, setting state `2`
+without allocating or inserting another window. The next completed gesture
+can therefore reopen a normally closed menu, while an already open menu stays
+protected from repeated insertion.
+
+This differs from state `3` at `0x15E37`, which destroys and removes the last
+menu, and state `4` at `0x15E7B`, which clears the menu vector. Native creation
+continues to cover those empty-vector cases. These control-flow observations
+do not constitute a full Xemu gameplay test.

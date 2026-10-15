@@ -84,7 +84,8 @@ class ChordMachine:
         self.calls.append(args)
         assert args == (native.OWNER, 0, native.INTERFACE)
         native.put(uc, native.OWNER + 0x1C, 2)
-        native.put(uc, native.OWNER + 0x24, native.VECTOR + 4)
+        if native.get(uc, native.OWNER + 0x24) == native.VECTOR:
+            native.put(uc, native.OWNER + 0x24, native.VECTOR + 4)
         native.return_from(uc, 12)
 
     def close_menu(self, state=0):
@@ -210,9 +211,14 @@ def test_simultaneous_compatibility_in_normal_and_freecam_states(state):
     f=ChordMachine();f.close_menu(state);f.buttons(WAB);assert f.poll()==1 and len(f.calls)==1
 
 
-def test_nonempty_menu_vector_prevents_duplicate_native_menu():
+@pytest.mark.parametrize('state',[0,1])
+def test_hidden_retained_menu_is_reopened_through_native_action(state):
     f=ChordMachine();native.put(f.u,native.OWNER+0x24,native.VECTOR+4);f.buttons(WAB)
-    assert f.poll()==1 and not f.calls
+    native.put(f.u,native.OWNER+0x1C,state)
+    assert f.poll()==1 and len(f.calls)==1
+    assert native.get(f.u,native.OWNER+0x1C)==2
+    assert native.get(f.u,native.OWNER+0x24)==native.VECTOR+4
+    assert f.poll()==1 and len(f.calls)==1
 
 
 @pytest.mark.parametrize('held',[{'White'},{'A'},{'B'},{'White','A'},{'White','B'},{'A','B'},{'L3'},{'Start'}])

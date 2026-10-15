@@ -46,6 +46,7 @@ def test_common_native_scheduler_opens_complete_menu_once_per_press(
     image, metadata = activation_image
     assert {'hotkeyPoll', 'hotkeyDispatch'} <= metadata['routines'].keys()
     assert metadata['hotkeyStateVA'] > 0
+    assert metadata['activation']['reuseRetainedMenu'] is True
     monkeypatch.setattr(native, 'ROOT_MENU_TITLE', 'Debug Menu - ' + laboratory.VERSION)
     u = native.machine(image)
     u.mem_map(0x720000, 0x10000)
@@ -168,8 +169,36 @@ def test_common_native_scheduler_opens_complete_menu_once_per_press(
     frame(True)
     assert len(allocations) == count and entered == [0x16610, 0x138D0]
 
-    # Simulate a fully closed root without replacing native destructors. The
-    # still-held chord must not reopen it; release then repress must reopen.
+    # Execute the actual ordinary close callback: it hides the root and retains
+    # its vector entry. Reopening must use that same root, not allocate/stack.
+    for _ in range(4):
+        native.put(u, stack, native.EXIT)
+        u.reg_write(r.UC_X86_REG_ESP, stack)
+        u.reg_write(r.UC_X86_REG_ECX, context)
+        native.run_until(u, 0x13870, handlers, count=50000)
+        assert u.reg_read(r.UC_X86_REG_ESP) == stack + 4
+        assert native.get(u, native.OWNER + 0x1C) == initial_state
+        assert native.get(u, native.OWNER + 0x24) == native.VECTOR + 4
+        calls = len(entered)
+        frame(True)
+        assert len(entered) == calls and len(allocations) == count
+        frame(False)
+        assert len(entered) == calls and len(allocations) == count
+        if chord == 'timed-white-a-b':
+            for held in [{0x2C}, set(), {0x18}, set()]:
+                frame(held)
+                assert len(entered) == calls
+            frame({0x1C})
+        else:
+            frame(True)
+        assert entered[-1] == 0x16610 and len(entered) == calls + 1
+        assert len(allocations) == count
+        assert native.get(u, native.VECTOR) == context
+        assert native.get(u, native.OWNER + 0x24) == native.VECTOR + 4
+        assert native.get(u, native.OWNER + 0x1C) == 2
+
+    # A genuinely removed vector entry must still permit a fresh allocation.
+    # Destruction itself is outside this activation test's engine boundaries.
     native.put(u, native.OWNER + 0x1C, initial_state)
     native.put(u, native.OWNER + 0x24, native.VECTOR)
     frame(True)
@@ -178,4 +207,4 @@ def test_common_native_scheduler_opens_complete_menu_once_per_press(
     assert len(allocations) == count
     frame(True)
     assert len(allocations) == count * 2
-    assert entered == [0x16610, 0x138D0, 0x16610, 0x138D0]
+    assert entered == [0x16610, 0x138D0] + [0x16610] * 4 + [0x16610, 0x138D0]

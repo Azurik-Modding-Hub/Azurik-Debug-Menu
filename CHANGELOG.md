@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.1.0-dev.4 — Reopen the native menu with the timed shortcut
+
+Development preview; the stable 1.0.0 Windows patcher remains unchanged.
+
+- Allow **WHITE → A → B within one second** to reopen the menu after a normal
+  close, without entering the original cheat code. Release the gesture buttons
+  before starting another sequence.
+- Reuse the menu retained by the native close callback. The shortcut no longer
+  incorrectly treats a retained, closed menu as an already open window.
+- Keep the active-menu guard: repeating the gesture over an open menu does not
+  stack another menu. The native open action handles both initial creation and
+  reopening.
+- Keep English menu labels, Text boxes and Oracles, fragment/seal messages under
+  Text boxes, and the Game state key grants. No Animations category is included.
+- Full Xemu gameplay verification remains pending; this entry does not claim a
+  displayed or tested in-game result.
+
 ## 1.0.0 — Keep idle animation and restore controls after Freecam
 
 - Show **Commande menue - 1.0.0** in the native debug-menu header and document

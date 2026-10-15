@@ -39,11 +39,14 @@ briefly remains in the stack. Confirm idle animation and exit behavior in Xemu.
 
 The `feature/native-debug-laboratory` branch adds **WHITE, then A, then B within one second** to open the native menu
 directly during loaded gameplay. Buttons may be released between steps. **L3 + START** remains available.
+After closing the menu normally, release the gesture buttons and repeat
+**WHITE → A → B** to reopen it without entering the original cheat code.
+The shortcut reuses the native retained menu rather than stacking another window.
 The menu is in English, with **Text boxes**, **Oracles**, and **Game state → Keys**
 for all 20 supported key types. Fragment/seal messages are under Text boxes;
 additional spoken-only hints are labelled explicitly. There is no Animations
 category. Key grants respect the five inventory slots and do not replace held
-keys. This is **1.1.0-dev.3**, separate from the stable 1.0.0 Windows patcher.
+keys. This is **1.1.0-dev.4**, separate from the stable 1.0.0 Windows patcher.
 [Preview workflow, shortcuts and testing limits](docs/LABORATORY.md).
 
 ## Controls

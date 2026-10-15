@@ -1,4 +1,4 @@
-# Native Debug Laboratory — 1.1.0-dev.3
+# Native Debug Laboratory — 1.1.0-dev.4
 
 This preview extends the existing in-game menu. Its title and all added menu
 labels are **English**, independently of the game's playback language.
@@ -12,7 +12,10 @@ starts at WHITE, rather than restarting at every following key. A missed or
 expired sequence requires a fresh WHITE press. **L3 + START** remains available.
 
 The menu opens once per gesture. Release the remaining gesture buttons before
-opening it again. It does not stack windows over an already open menu. The
+opening it again. After a normal close, repeat **WHITE → A → B within one
+second** to reopen it; the original cheat sequence is not required. Normal
+closure retains the native menu object, and the shortcut now asks the game's
+open action to reuse it. It does not stack windows over an already open menu. The
 actual Scene world and player getters prevent queuing an opening before a
 player has spawned. Analog input values are preserved; only recognised button
 edges are consumed.
@@ -68,6 +71,10 @@ The input must contain the pristine supported EU executable, including when
 it contains edited level files. Existing output files are refused. The stable
 Windows patcher and its default 1.0.0 mode remain unchanged. No game files or
 private trial ISO are distributed in this repository.
+
+The reopening correction follows the native menu's close and open paths. Its
+complete behaviour in Xemu still needs verification, including repeated normal
+closes and shortcut openings during gameplay.
 
 Native tests execute the real scheduled input caller, the owner dispatcher,
 the retail menu action and the complete root constructor. They cover the timed gesture, released/overlapping steps, timeouts, the alternative

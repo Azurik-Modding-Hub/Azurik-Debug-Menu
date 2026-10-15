@@ -78,7 +78,8 @@ def emit_poll(va, state):
     c.label('open')
     c.emit('837df002');c.branch('0f84','handled')
     c.emit('837f1c01');c.branch('0f87','handled')
-    c.emit('8b4720394724');c.branch('0f85','handled')
+    # Native close (13870) hides the menu but retains its vector entry.
+    # Action 0 reuses that root; only an empty vector allocates a new one.
     c.emit('566a0057');c.branch('e8',0x16610)
     c.label('handled');c.emit('b801000000');c.branch('e9','done')
     c.label('reset');c.emit('8b55fcc70200000000c7420400000000')
